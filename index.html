@@ -1895,6 +1895,9 @@ function analyze() {
   const resultsEl = document.getElementById('results');
   resultsEl.style.display = 'block';
   resultsEl.scrollIntoView({behavior:'smooth',block:'start'});
+
+  // ── Save to Google Sheet ──
+  setTimeout(saveToGoogleSheet, 500);
 }
 
 function colorIrrCard(id, irr) {
@@ -2045,9 +2048,6 @@ function printReport() {
     alert('Please analyze a policy first, then export.');
     return;
   }
-
-  // ── Save to Google Sheet ──
-  saveToGoogleSheet();
 
   // Set PDF filename
   const originalTitle = document.title;
