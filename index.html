@@ -466,12 +466,14 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 }
 .rec-box.surrender{background:rgba(248,113,113,0.06);border-color:rgba(248,113,113,0.25);}
 .rec-box.continue {background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.22);}
+.rec-box.mfbetter {background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.3);}
 .rec-box.paidup   {background:rgba(251,191,36,0.05); border-color:rgba(251,191,36,0.22);}
 .rec-box.review   {background:rgba(37,99,235,0.04); border-color:rgba(37,99,235,0.2);}
 .rec-emoji{font-size:28px;flex-shrink:0;margin-top:2px;}
 .rec-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:5px;}
 .rec-title.surrender{color:var(--red);}
 .rec-title.continue {color:var(--green);}
+.rec-title.mfbetter {color:var(--green);}
 .rec-title.paidup   {color:var(--amber);}
 .rec-title.review   {color:var(--gold);}
 .rec-body{font-size:13px;color:var(--text2);line-height:1.7;}
@@ -523,12 +525,22 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 
 /* ── PRINT ── */
 @media print{
-  body{background:#f0f4f8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   body::before{display:none!important;}
   .no-print{display:none!important;}
-  #results{display:block!important;}
-  .card{break-inside:avoid;}
-  .app{padding:0 20px!important;max-width:100%!important;}
+  #results{display:block!important;margin-top:0!important;}
+  .card{break-inside:avoid;margin-bottom:10px!important;}
+  .card-body{padding:14px!important;}
+  .card-head{padding:12px 16px!important;}
+  .app{padding:0 16px!important;max-width:100%!important;}
+  .page-hero{margin-bottom:12px!important;}
+  .metric-row{gap:8px!important;margin-bottom:10px!important;}
+  .mcard{padding:12px!important;}
+  .grid-2{gap:10px!important;}
+  .score-section{padding:14px!important;}
+  .rec-box{padding:14px!important;}
+  .detail-grid{gap:6px!important;}
+  .chart-wrap{height:200px!important;}
 }
 
 /* ── RESPONSIVE ── */
@@ -602,8 +614,8 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
       </div>
       <div class="card-body">
 
-        <!-- Client & Policy Name -->
-        <div class="fg fg-2" style="margin-bottom:14px;">
+        <!-- Client, Policy Name & Policy No -->
+        <div class="fg fg-3" style="margin-bottom:14px;">
           <div class="field">
             <label>Client Name</label>
             <input type="text" id="clientName" placeholder="e.g. Mr. Sharma" />
@@ -611,6 +623,10 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
           <div class="field">
             <label>Policy Name</label>
             <input type="text" id="policyName" placeholder="e.g. LIC Jeevan Anand" />
+          </div>
+          <div class="field">
+            <label>Policy No.</label>
+            <input type="text" id="policyNo" placeholder="e.g. 123456789" />
           </div>
         </div>
 
@@ -1703,7 +1719,7 @@ function analyze() {
 
   if (winner.type === 'mf') {
     const mfWithTax = mfFinal + 15000;
-    recType = 'surrender';
+    recType = 'mfbetter';
     recEmoji = '📈';
     recTitleText = 'Mutual Fund is the Better Option';
     recBodyText = `Mutual Fund gives the highest maturity value of ${inr(mfFinal)}, which is ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)}). Surrendering the policy and investing in mutual funds will generate significantly more wealth over the remaining ${yearsLeft} years.`;
@@ -2030,6 +2046,14 @@ function printReport() {
     return;
   }
 
+  // ── Save to Google Sheet ──
+  saveToGoogleSheet();
+
+  // Set PDF filename
+  const originalTitle = document.title;
+  const clientName = document.getElementById('clientName').value.trim() || 'Client';
+  document.title = `Policy Review_${clientName}`;
+
   // Hide everything except results
   const header = document.querySelector('header');
   const app = document.querySelector('.app');
@@ -2050,7 +2074,47 @@ function printReport() {
   setTimeout(() => {
     hideEls.forEach(el => el.classList.remove('no-print'));
     header.classList.remove('no-print');
+    document.title = originalTitle;
   }, 500);
+}
+
+// ── Google Sheet Auto-Save ──
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxR_YWt7vbldI57ZxqX3WrnvZrp0gTLWPa8Fqo-YmMjRvo760WT_gd62njXd3q9e7n0/exec';
+
+function saveToGoogleSheet() {
+  if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') return;
+
+  const gv = id => (document.getElementById(id)?.value || '').trim();
+  const gt = id => (document.getElementById(id)?.textContent || '').trim();
+
+  const params = new URLSearchParams({
+    c1:  gv('clientName'),
+    c2:  gv('policyName'),
+    c3:  gv('policyNo'),
+    c4:  gv('policyCategory'),
+    c5:  gv('policySubtype'),
+    c6:  gv('sumAssured'),
+    c7:  gv('annualPremium'),
+    c8:  gv('policyTerm'),
+    c9:  gv('premiumTerm'),
+    c10: gv('startDate'),
+    c11: gv('maturityDate'),
+    c12: gv('premiumsPaid'),
+    c13: gv('totalPremiumPaid'),
+    c14: gt('td-cont-val'),
+    c15: gt('td-pu-val'),
+    c16: gt('td-sur-val'),
+    c17: gt('td-mf-val'),
+    c18: gt('td-cont-irr'),
+    c19: gt('td-sur-irr'),
+    c20: gv('mfReturn'),
+    c21: gt('wg-val'),
+    c22: gt('rec-title')
+  });
+
+  // Simple image request — no CORS, works everywhere
+  const img = new Image();
+  img.src = GOOGLE_SHEET_URL + '?' + params.toString();
 }
 </script>
 </body>
