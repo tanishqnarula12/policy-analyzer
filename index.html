@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Fintness — Policy Review & Investment Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — Clean Blue & White
+   ═══════════════════════════════════════════ */
+:root {
+  --navy:    #f0f4f8;
+  --navy2:   #e8eef4;
+  --navy3:   #ffffff;
+  --navy4:   #dce5ef;
+  --navy5:   #c8d6e5;
+  --gold:    #2563eb;
+  --gold2:   #1d4ed8;
+  --gold3:   #1e40af;
+  --teal:    #0891b2;
+  --red:     #dc2626;
+  --green:   #16a34a;
+  --amber:   #d97706;
+  --blue:    #3b82f6;
+  --purple:  #7c3aed;
+  --text:    #1e293b;
+  --text2:   #475569;
+  --text3:   #94a3b8;
+  --border:  rgba(0,0,0,0.08);
+  --borderG: rgba(37,99,235,0.2);
+  --radius:  15px;
+  --rsm:     9px;
+  --card:    rgba(255,255,255,0.95);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;}
+html{scroll-behavior:smooth}
+
+body {
+  font-family:'IBM Plex Sans',sans-serif;
+  background:#f0f4f8;
+  color:var(--text);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* Ambient background */
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(37,99,235,0.04) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 90%, rgba(8,145,178,0.03) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+header {
+  position:sticky;top:0;z-index:300;
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--borderG);
+  padding:0 40px;height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo {display:flex;align-items:center;gap:12px;}
+.logo-mark {
+  width:38px;height:38px;
+  border:1.5px solid var(--gold);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  background:rgba(37,99,235,0.08);
+  box-shadow:0 0 20px rgba(37,99,235,0.1);
+}
+.logo-name {
+  font-family:'Playfair Display',serif;
+  font-size:22px;letter-spacing:-0.02em;
+}
+.logo-name em {color:var(--gold);font-style:normal;}
+.logo-tag {
+  font-size:9px;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#fff;
+  background:var(--gold);padding:2px 7px;border-radius:4px;
+}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+
+/* ── BUTTONS ── */
+.btn {
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:13px;font-weight:500;
+  border:none;cursor:pointer;
+  border-radius:var(--rsm);
+  display:inline-flex;align-items:center;gap:7px;
+  transition:all .2s;letter-spacing:.01em;
+}
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold),#1d4ed8);
+  color:#fff;padding:9px 20px;font-weight:700;
+  box-shadow:0 4px 18px rgba(37,99,235,0.28);
+}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(37,99,235,0.42);}
+.btn-outline {
+  background:transparent;
+  border:1px solid var(--borderG);
+  color:var(--gold);padding:9px 16px;
+}
+.btn-outline:hover{background:rgba(37,99,235,0.06);}
+.btn-ghost{background:transparent;color:var(--text2);padding:8px 14px;font-size:12px;}
+.btn-ghost:hover{color:var(--text);}
+.btn-analyze {
+  background:linear-gradient(135deg,#2563eb,#60a5fa,#2563eb);
+  background-size:200% auto;
+  color:#fff;
+  padding:15px 44px;font-size:15px;font-weight:700;
+  border-radius:12px;letter-spacing:.04em;
+  box-shadow:0 8px 30px rgba(37,99,235,0.3);
+  animation:shimmer 3s linear infinite;
+}
+.btn-analyze:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(37,99,235,0.45);}
+@keyframes shimmer{0%{background-position:0% center}100%{background-position:200% center}}
+
+/* ── LAYOUT ── */
+.app {
+  position:relative;z-index:1;
+  max-width:1280px;margin:0 auto;
+  padding:32px 40px 80px;
+}
+
+/* ── PAGE HERO ── */
+.page-hero {
+  margin-bottom:32px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+.hero-kicker {
+  font-size:10px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:6px;
+}
+.hero-title {
+  font-family:'Playfair Display',serif;
+  font-size:32px;line-height:1.15;
+  background:linear-gradient(135deg,var(--text),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub {font-size:14px;color:var(--text2);margin-top:6px;}
+
+/* ── TWO-COL GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.full{grid-column:1/-1;}
+
+/* ── CARD ── */
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+  transition:border-color .3s;
+}
+.card:hover{border-color:rgba(37,99,235,0.18);}
+.card-head {
+  padding:18px 22px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.cicon {
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.ci-gold{background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.2);}
+.ci-teal{background:rgba(45,212,191,0.12);border:1px solid rgba(45,212,191,0.2);}
+.ci-blue{background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.2);}
+.ci-red {background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.2);}
+.ci-green{background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.2);}
+.ci-purple{background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.2);}
+.ctitle{font-size:14px;font-weight:600;color:var(--text);}
+.csub  {font-size:11px;color:var(--text3);margin-top:1px;}
+.card-body{padding:22px;}
+
+/* ── SECTION DIVIDER INSIDE CARD ── */
+.inner-section {
+  font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold);
+  padding:14px 0 10px;
+  border-top:1px solid var(--border);
+  margin-top:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.inner-section:first-child{border-top:none;padding-top:0;margin-top:0;}
+.inner-section::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(37,99,235,0.2),transparent);}
+
+/* ── FORM FIELDS ── */
+.fg{display:grid;gap:14px;}
+.fg-2{grid-template-columns:1fr 1fr;}
+.fg-3{grid-template-columns:1fr 1fr 1fr;}
+.fg-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.fg-full{grid-column:1/-1;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+
+.field label {
+  font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+}
+
+.tip {
+  width:14px;height:14px;
+  background:rgba(37,99,235,0.1);
+  border:1px solid rgba(37,99,235,0.25);
+  border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:8px;color:var(--gold);
+  cursor:help;position:relative;flex-shrink:0;
+  transition:all .2s;font-style:normal;
+}
+.tip:hover{background:rgba(37,99,235,0.2);}
+.tip:hover::after {
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%);
+  background:#fff;border:1px solid rgba(37,99,235,0.2);
+  color:var(--text);padding:7px 11px;border-radius:7px;
+  font-size:11px;white-space:nowrap;z-index:999;
+  pointer-events:none;font-style:normal;font-weight:400;
+  letter-spacing:0;text-transform:none;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+}
+
+input,select {
+  height:42px;padding:0 14px;
+  background:rgba(241,245,249,0.8);
+  border:1px solid rgba(0,0,0,0.1);
+  border-radius:var(--rsm);
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:14px;color:var(--text);
+  outline:none;transition:all .2s;width:100%;
+  -webkit-appearance:none;
+}
+input:focus,select:focus {
+  border-color:var(--gold);
+  background:rgba(37,99,235,0.04);
+  box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+input[readonly]{
+  background:rgba(241,245,249,0.5);
+  color:var(--text2);cursor:not-allowed;
+  border-color:rgba(0,0,0,0.06);
+}
+/* Auto-calculated field gets a subtle blue tint */
+#annualPremium[readonly],
+#t_revBonus[readonly],
+#t_termBonus[readonly],
+#t_paidup[readonly],
+#t_ssv[readonly] {
+  background: rgba(37,99,235,0.06);
+  color: var(--gold2);
+  border-color: rgba(37,99,235,0.18);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+}
+input::placeholder{color:var(--text3);}
+select option{background:#fff;color:var(--text);}
+
+/* ── DYNAMIC TOOLTIP (shows formula + live calc) ── */
+.tip-dynamic {
+  width:14px;height:14px;
+  background:rgba(37,99,235,0.1);
+  border:1px solid rgba(37,99,235,0.25);
+  border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:8px;color:var(--gold);
+  cursor:help;position:relative;flex-shrink:0;
+  transition:all .2s;font-style:normal;
+}
+.tip-dynamic:hover{background:rgba(37,99,235,0.2);}
+.tip-dynamic:hover::after {
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%);
+  background:#fff;border:1px solid rgba(37,99,235,0.2);
+  color:var(--text);padding:10px 14px;border-radius:8px;
+  font-size:11px;white-space:pre-line;z-index:999;
+  pointer-events:none;font-style:normal;font-weight:400;
+  letter-spacing:0;text-transform:none;
+  box-shadow:0 8px 24px rgba(0,0,0,0.12);
+  min-width:240px;max-width:360px;line-height:1.6;
+  text-align:left;
+}
+
+.inp-wrap{position:relative;}
+.inp-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;font-weight:500;pointer-events:none;font-family:'IBM Plex Mono',monospace;}
+.inp-suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;}
+.has-prefix input{padding-left:26px;}
+.has-suffix input{padding-right:32px;}
+
+/* ── TOGGLE PILL — FUND VALUE MODE ── */
+.toggle-group {
+  display:flex;
+  background:rgba(241,245,249,0.8);
+  border:1px solid var(--border);
+  border-radius:8px;padding:3px;gap:3px;
+}
+.tgl-btn {
+  flex:1;padding:8px 12px;border-radius:6px;
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:none;background:transparent;
+  color:var(--text2);transition:all .2s;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+.tgl-btn.active {
+  background:rgba(37,99,235,0.12);
+  color:var(--gold);
+  border:1px solid rgba(37,99,235,0.25);
+}
+
+/* ── LIVE RESULT STRIP ── */
+.live-strip {
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-top:16px;
+}
+.live-item {
+  background:rgba(241,245,249,0.8);
+  border:1px solid var(--border);
+  border-radius:var(--rsm);
+  padding:12px 16px;
+}
+.li-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+.li-val  {font-size:18px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--text);margin-top:3px;}
+.li-badge{font-size:10px;margin-top:4px;}
+
+/* ── MF ASSUMPTIONS CARD ── */
+.mf-row {display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* ── ACTION ROW ── */
+.action-row{display:flex;justify-content:center;gap:12px;margin:4px 0;}
+
+/* ═══ RESULTS ═══ */
+#results{display:none;}
+
+/* ── SCORE RING ── */
+.score-section {
+  display:flex;align-items:center;gap:28px;
+  padding:22px;
+}
+.score-ring-wrap {
+  position:relative;flex-shrink:0;
+  width:120px;height:120px;
+}
+.score-ring-wrap svg{width:100%;height:100%;}
+.score-center {
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-num{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;}
+.score-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);}
+.score-details{flex:1;}
+.score-title{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:6px;}
+.score-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+.score-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.stag {
+  font-size:11px;font-weight:500;
+  padding:3px 10px;border-radius:20px;
+  border:1px solid;
+}
+.stag-gold{color:var(--gold);border-color:rgba(37,99,235,0.3);background:rgba(37,99,235,0.08);}
+.stag-red {color:var(--red);border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);}
+.stag-green{color:var(--green);border-color:rgba(74,222,128,0.4);background:rgba(74,222,128,0.08);}
+.stag-blue{color:var(--blue);border-color:rgba(96,165,250,0.4);background:rgba(96,165,250,0.08);}
+
+/* ── METRIC CARDS ── */
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.mcard {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  transition:border-color .3s;
+}
+.mcard:hover{border-color:rgba(37,99,235,0.18);}
+.mcard.featured{border-color:var(--borderG);box-shadow:0 0 30px rgba(37,99,235,0.06);}
+.mc-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.mc-val{font-size:26px;font-weight:600;font-family:'IBM Plex Mono',monospace;margin:8px 0 4px;line-height:1;}
+.mc-sub{font-size:11px;color:var(--text3);}
+.mc-icon{font-size:20px;margin-bottom:6px;}
+.c-gold{color:var(--gold);}
+.c-green{color:var(--green);}
+.c-red{color:var(--red);}
+.c-blue{color:var(--blue);}
+.c-amber{color:var(--amber);}
+.c-teal{color:var(--teal);}
+.c-purple{color:var(--purple);}
+
+/* ── COMPARISON TABLE ── */
+.ctable-wrap{overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th {
+  background:rgba(241,245,249,0.8);
+  padding:11px 18px;
+  text-align:left;
+  font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text3);
+  border-bottom:1px solid var(--border);
+}
+thead th:not(:first-child){text-align:right;}
+tbody td {
+  padding:14px 18px;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+  font-size:14px;color:var(--text);
+}
+tbody td:not(:first-child){text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(37,99,235,0.03);}
+.tr-best td{background:rgba(22,163,74,0.06)!important;}
+.tr-worst td{background:rgba(220,38,38,0.04)!important;}
+.tr-highlight td{background:rgba(37,99,235,0.05)!important;}
+.scenario-name{display:flex;align-items:center;gap:9px;font-weight:500;}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.irr-pill{
+  display:inline-block;
+  padding:2px 9px;border-radius:12px;
+  font-size:11px;font-weight:600;
+  font-family:'IBM Plex Mono',monospace;
+}
+.pill-green{background:rgba(74,222,128,0.15);color:var(--green);border:1px solid rgba(74,222,128,0.25);}
+.pill-amber{background:rgba(251,191,36,0.12);color:var(--amber);border:1px solid rgba(251,191,36,0.25);}
+.pill-red  {background:rgba(248,113,113,0.12);color:var(--red);  border:1px solid rgba(248,113,113,0.25);}
+.pill-blue {background:rgba(96,165,250,0.12); color:var(--blue); border:1px solid rgba(96,165,250,0.25);}
+.pill-gold {background:rgba(37,99,235,0.1); color:var(--gold); border:1px solid rgba(37,99,235,0.25);}
+.best-badge {
+  font-size:9px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--green);
+  background:rgba(74,222,128,0.12);
+  border:1px solid rgba(74,222,128,0.25);
+  padding:1px 7px;border-radius:8px;margin-left:6px;
+}
+
+/* ── WEALTH GAIN ── */
+.wg-bar {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 22px;border-radius:var(--rsm);margin-top:14px;
+  border:1px solid;
+}
+.wg-bar.pos{background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.2);}
+.wg-bar.neg{background:rgba(248,113,113,0.06);border-color:rgba(248,113,113,0.2);}
+.wg-label{font-size:12px;font-weight:500;color:var(--text2);}
+.wg-sub  {font-size:11px;color:var(--text3);margin-top:2px;}
+.wg-val  {font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+.wg-val.pos{color:var(--green);}
+.wg-val.neg{color:var(--red);}
+
+/* ── RECOMMENDATION ── */
+.rec-box {
+  border-radius:var(--radius);padding:22px;
+  display:flex;align-items:flex-start;gap:16px;
+  border:1px solid;
+}
+.rec-box.surrender{background:rgba(248,113,113,0.06);border-color:rgba(248,113,113,0.25);}
+.rec-box.continue {background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.22);}
+.rec-box.paidup   {background:rgba(251,191,36,0.05); border-color:rgba(251,191,36,0.22);}
+.rec-box.review   {background:rgba(37,99,235,0.04); border-color:rgba(37,99,235,0.2);}
+.rec-emoji{font-size:28px;flex-shrink:0;margin-top:2px;}
+.rec-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:5px;}
+.rec-title.surrender{color:var(--red);}
+.rec-title.continue {color:var(--green);}
+.rec-title.paidup   {color:var(--amber);}
+.rec-title.review   {color:var(--gold);}
+.rec-body{font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* ── BREAKEVEN TIMELINE ── */
+.breakeven-line {
+  position:relative;height:6px;
+  background:rgba(0,0,0,0.08);
+  border-radius:4px;margin:18px 0 8px;
+  overflow:visible;
+}
+.bel-fill {
+  height:100%;border-radius:4px;
+  background:linear-gradient(to right,var(--red),var(--amber),var(--green));
+  transition:width .8s ease;
+}
+.bel-marker {
+  position:absolute;top:-6px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--gold);border:2px solid #fff;
+  transform:translateX(-50%);
+  box-shadow:0 0 10px rgba(37,99,235,0.3);
+}
+.bel-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);}
+.bel-year {
+  position:absolute;top:-28px;
+  transform:translateX(-50%);
+  background:var(--navy3);border:1px solid var(--borderG);
+  color:var(--gold);font-size:11px;font-weight:600;
+  padding:2px 8px;border-radius:5px;white-space:nowrap;
+}
+
+/* ── CHART ── */
+.chart-wrap{height:280px;position:relative;}
+
+/* ── CHARGES BREAKDOWN ── */
+.charge-bars{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.charge-row{display:flex;align-items:center;gap:12px;}
+.charge-name{font-size:12px;color:var(--text2);width:160px;flex-shrink:0;}
+.charge-bar-bg{flex:1;height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden;}
+.charge-bar-fill{height:100%;border-radius:3px;background:linear-gradient(to right,var(--red),rgba(248,113,113,0.5));}
+.charge-pct{font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--text2);width:40px;text-align:right;}
+
+/* ── DETAIL GRID ── */
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.detail-item{padding:12px 14px;background:rgba(241,245,249,0.7);border:1px solid var(--border);border-radius:var(--rsm);}
+.di-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+.di-val{font-size:15px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--text);margin-top:3px;}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#f0f4f8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body::before{display:none!important;}
+  .no-print{display:none!important;}
+  #results{display:block!important;}
+  .card{break-inside:avoid;}
+  .app{padding:0 20px!important;max-width:100%!important;}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .app{padding:20px 16px 60px;}
+  header{padding:0 16px;}
+  .metric-row{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .fg-3,.fg-4{grid-template-columns:1fr 1fr;}
+  .detail-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:560px){
+  .fg-2,.fg-3,.fg-4{grid-template-columns:1fr;}
+  .metric-row{grid-template-columns:1fr;}
+}
+
+/* ── FADE IN ── */
+.fade-in{animation:fadeIn .5s ease forwards;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ HEADER ════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">📊</div>
+    <div>
+      <span class="logo-name">Team <em>Fintness</em></span>
+      <div style="font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-top:1px;">Professional Policy Analyzer</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <button class="btn btn-ghost" onclick="resetAll()">↺ Reset</button>
+    <button class="btn btn-outline" onclick="printReport()">⬇ Export PDF</button>
+  </div>
+</header>
+
+<!-- ════════════════ APP ════════════════ -->
+<div class="app">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div>
+      <div class="hero-kicker">Professional Policy Analyzer</div>
+      <div style="font-family:'Playfair Display',serif;font-size:30px;background:linear-gradient(135deg,#1e293b,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+        Policy Review & Investment Comparison
+      </div>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px;">
+        Analyze Traditional & ULIP policies · Compare with Mutual Funds · Get advisor-grade insights
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);text-align:right;line-height:1.8;">
+      <div id="current-date" style="color:var(--text2);font-weight:500;"></div>
+      <div>All calculations are client-side</div>
+      <div>Data is never stored or shared</div>
+    </div>
+  </div>
+
+  <!-- ══ ROW 1: POLICY DETAILS + BONUS/SURRENDER ══ -->
+  <div class="grid-2" style="margin-bottom:20px;">
+
+    <!-- CARD 1: POLICY DETAILS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="cicon ci-gold">📋</div>
+        <div>
+          <div class="ctitle">Policy Details</div>
+          <div class="csub">Basic information about the insurance policy</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- Client & Policy Name -->
+        <div class="fg fg-2" style="margin-bottom:14px;">
+          <div class="field">
+            <label>Client Name</label>
+            <input type="text" id="clientName" placeholder="e.g. Mr. Sharma" />
+          </div>
+          <div class="field">
+            <label>Policy Name</label>
+            <input type="text" id="policyName" placeholder="e.g. LIC Jeevan Anand" />
+          </div>
+        </div>
+
+        <!-- TYPE ROW -->
+        <div class="inner-section">Policy Type</div>
+        <div class="fg fg-2">
+          <div class="field">
+            <label>Policy Category</label>
+            <select id="policyCategory" onchange="onCategoryChange()">
+              <option value="traditional">Traditional</option>
+              <option value="ulip">ULIP</option>
+            </select>
+          </div>
+          <!-- Sub-type — only for Traditional -->
+          <div class="field" id="subtype-wrap">
+            <label>Sub Type</label>
+            <select id="policySubtype">
+              <option value="endowment">Endowment</option>
+              <option value="moneyback">Money Back</option>
+              <option value="whole_life">Whole Life</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- CORE NUMBERS -->
+        <div class="inner-section">Core Policy Numbers</div>
+        <div class="fg fg-2">
+
+          <!-- Sum Assured -->
+          <div class="field">
+            <label>Sum Assured <span class="tip" data-tip="Guaranteed amount on death or maturity">?</span></label>
+            <div class="inp-wrap has-prefix">
+              <span class="inp-prefix">₹</span>
+              <input type="number" id="sumAssured" placeholder="10,00,000" oninput="liveCalc()"/>
+            </div>
+          </div>
+
+          <!-- Premium Frequency -->
+          <div class="field">
+            <label>Premium Frequency <span class="tip" data-tip="How often the premium is paid">?</span></label>
+            <select id="premiumFrequency" onchange="onFrequencyChange()">
+              <option value="12">Monthly</option>
+              <option value="4">Quarterly</option>
+              <option value="2">Half Yearly</option>
+              <option value="1" selected>Yearly</option>
+            </select>
+          </div>
+
+          <!-- Per-Installment Premium -->
+          <div class="field">
+            <label id="installment-label">Premium Per Installment <span class="tip" data-tip="Amount paid each time (per month / quarter / half-year / year)">?</span></label>
+            <div class="inp-wrap has-prefix">
+              <span class="inp-prefix">₹</span>
+              <input type="number" id="installmentPremium" placeholder="50,000" oninput="onInstallmentChange()"/>
+            </div>
+          </div>
+
+          <!-- Annual Premium — auto-calculated, read-only -->
+          <div class="field">
+            <label>Annual Premium Total <span class="tip" data-tip="Auto-calculated: Installment × frequency per year. Used in all calculations.">?</span></label>
+            <div class="inp-wrap has-prefix">
+              <span class="inp-prefix">₹</span>
+              <input type="number" id="annualPremium" placeholder="Auto" readonly/>
+            </div>
+          </div>
+
+          <!-- Policy Term -->
+          <div class="field">
+            <label>Policy Term (Years) <span class="tip" data-tip="Updates automatically if you set Maturity Date">?</span></label>
+            <input type="number" id="policyTerm" placeholder="20" oninput="onPolicyTermChange()"/>
+          </div>
+
+          <!-- Premium Paying Term -->
+          <div class="field">
+            <label>Premium Paying Term <span class="tip" data-tip="Years you will pay premium (may be less than policy term)">?</span></label>
+            <input type="number" id="premiumTerm" placeholder="15" oninput="liveCalc()"/>
+          </div>
+
+          <!-- Policy Start Date -->
+          <div class="field">
+            <label>Policy Start Date <span class="tip" data-tip="Sets Maturity Date automatically when combined with Policy Term">?</span></label>
+            <input type="date" id="startDate" oninput="onStartDateChange()"/>
+          </div>
+
+          <!-- Maturity Date — two-way synced -->
+          <div class="field">
+            <label>Maturity Date <span class="tip" data-tip="Auto-filled from Start Date + Term. Or enter manually to back-calculate Policy Term.">?</span></label>
+            <input type="date" id="maturityDate" oninput="onMaturityDateChange()"/>
+          </div>
+
+          <!-- Years Paid -->
+          <div class="field">
+            <label>Years Premium Paid So Far</label>
+            <input type="number" id="premiumsPaid" placeholder="5" oninput="liveCalc()"/>
+          </div>
+
+          <!-- Total Premium Paid -->
+          <div class="field">
+            <label>Total Premium Paid Till Date <span class="tip" data-tip="Auto-calculated. Override if different due to riders/GST">?</span></label>
+            <div class="inp-wrap has-prefix">
+              <span class="inp-prefix">₹</span>
+              <input type="number" id="totalPremiumPaid" placeholder="Auto-calculated" oninput="liveCalc()"/>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LIVE QUICK STATS -->
+        <div class="live-strip" id="live-strip" style="display:none;grid-template-columns:1fr 1fr 1fr 1fr;">
+          <div class="live-item">
+            <div class="li-label">Annual Premium</div>
+            <div class="li-val c-gold" id="ls-annual">—</div>
+          </div>
+          <div class="live-item">
+            <div class="li-label">Total Paid</div>
+            <div class="li-val c-gold" id="ls-paid">—</div>
+          </div>
+          <div class="live-item">
+            <div class="li-label">Years Remaining</div>
+            <div class="li-val" id="ls-remaining">—</div>
+          </div>
+          <div class="live-item">
+            <div class="li-label">% Term Completed</div>
+            <div class="li-val" id="ls-pct">—</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CARD 2: BONUS & SURRENDER — DYNAMIC -->
+    <div class="card">
+      <div class="card-head">
+        <div class="cicon ci-teal">💎</div>
+        <div>
+          <div class="ctitle">Bonus & Surrender Details</div>
+          <div class="csub" id="bs-card-sub">Traditional policy bonus and surrender values</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- ── TRADITIONAL FIELDS ── -->
+        <div id="trad-fields">
+
+          <div class="inner-section">Bonus Details</div>
+          <div class="fg fg-2">
+            <div class="field">
+              <label>Rev. Bonus Rate (per ₹1000 SA/yr) <span class="tip" data-tip="₹ bonus per ₹1000 of Sum Assured each year">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="t_revBonusRate" placeholder="45" oninput="liveCalc()"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Revisionary Bonus <span class="tip-dynamic" id="tip-revBonus" data-tip="= (SA / 1000) × Rate">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="t_revBonus" placeholder="Auto" readonly/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Terminal Bonus Rate (per ₹1000) <span class="tip" data-tip="₹ terminal bonus per ₹1000 SA on maturity">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="t_termBonusRate" placeholder="0" oninput="liveCalc()"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Terminal Bonus <span class="tip-dynamic" id="tip-termBonus" data-tip="= (SA / 1000) × Terminal Rate">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="t_termBonus" placeholder="Auto" readonly/>
+              </div>
+            </div>
+          </div>
+
+          <div class="inner-section">Surrender Values</div>
+          <div class="fg fg-2">
+            <div class="field">
+              <label>Guaranteed Surrender Value % <span class="tip" data-tip="LIC GSV = % of total premiums paid (excl. first year in some policies)">?</span></label>
+              <div class="inp-wrap has-suffix">
+                <input type="number" id="t_gsvPct" placeholder="30" oninput="liveCalc()"/>
+                <span class="inp-suffix">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Surrender Value Factor <span class="tip" data-tip="Multiplier applied to eligible premiums (from LIC's SSV table based on years paid)">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">×</span>
+                <input type="number" id="t_svFactor" placeholder="0.30" step="0.01" oninput="liveCalc()"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Paid-up Value <span class="tip-dynamic" id="tip-paidup" data-tip="= [(AP × YrsPaid) + (RevBonus × YrsPaid)] × (1.0275)^YrsRemaining">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="t_paidup" placeholder="Auto" readonly/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Special Surrender Value <span class="tip-dynamic" id="tip-ssv" data-tip="= (RevBonus × YrsPaid × GSV%) + (AP × (YrsPaid-1) × SVFactor)">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="t_ssv" placeholder="Auto" readonly/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live SV strip -->
+          <div class="live-strip" style="margin-top:14px;grid-template-columns:1fr 1fr 1fr;">
+            <div class="live-item">
+              <div class="li-label">GSV</div>
+              <div class="li-val c-amber" id="sv-gsv">—</div>
+            </div>
+            <div class="live-item">
+              <div class="li-label">SSV (Calc.)</div>
+              <div class="li-val c-blue" id="sv-ssv">—</div>
+            </div>
+            <div class="live-item">
+              <div class="li-label">Final SV (Higher)</div>
+              <div class="li-val c-gold" id="sv-final">—</div>
+              <div class="li-badge" id="sv-basis" style="color:var(--text3);font-size:10px;"></div>
+            </div>
+          </div>
+
+        </div><!-- /trad-fields -->
+
+        <!-- ── ULIP FIELDS ── -->
+        <div id="ulip-fields" style="display:none;">
+
+          <div class="inner-section">ULIP Structure</div>
+          <div class="fg fg-2">
+            <div class="field">
+              <label>Minimum Paying Term <span class="tip" data-tip="Minimum years you must pay premium (usually 5 years)">?</span></label>
+              <input type="number" id="u_minPayTerm" placeholder="5" oninput="liveCalc()"/>
+            </div>
+            <div class="field">
+              <label>Current Fund Value <span class="tip" data-tip="Enter manually or calculate via NAV × Units below">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="u_fundValue" placeholder="0" oninput="liveCalc()"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fund Value Mode Toggle -->
+          <div style="margin-top:12px;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;">Fund Value Input Mode</div>
+            <div class="toggle-group">
+              <button class="tgl-btn active" id="tgl-manual" onclick="setFVMode('manual')">✏️ Enter Manually</button>
+              <button class="tgl-btn" id="tgl-nav" onclick="setFVMode('nav')">🧮 NAV × Units</button>
+            </div>
+          </div>
+
+          <div id="nav-calc" style="display:none;margin-top:12px;">
+            <div class="fg fg-2">
+              <div class="field">
+                <label>Current NAV (₹)</label>
+                <div class="inp-wrap has-prefix">
+                  <span class="inp-prefix">₹</span>
+                  <input type="number" id="u_nav" placeholder="25.60" step="0.01" oninput="calcNavFV()"/>
+                </div>
+              </div>
+              <div class="field">
+                <label>Units Held</label>
+                <input type="number" id="u_units" placeholder="5000" step="0.001" oninput="calcNavFV()"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="inner-section">Surrender & Charges</div>
+          <div class="fg fg-2">
+            <div class="field">
+              <label>Surrender Charges <span class="tip" data-tip="% deducted from fund value on surrender (reduces over years)">?</span></label>
+              <div class="inp-wrap has-suffix">
+                <input type="number" id="u_surrenderCharge" placeholder="4" step="0.01" oninput="liveCalc()"/>
+                <span class="inp-suffix">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Paid-up Fund Value <span class="tip" data-tip="Fund value if you stop paying premiums now">?</span></label>
+              <div class="inp-wrap has-prefix">
+                <span class="inp-prefix">₹</span>
+                <input type="number" id="u_paidup" placeholder="0" oninput="liveCalc()"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="inner-section">Annual Charge Rates (% of Fund / Premium)</div>
+          <div class="fg fg-2">
+            <div class="field">
+              <label>Mortality Charges <span class="tip" data-tip="Cost of life cover deducted monthly from fund">?</span></label>
+              <div class="inp-wrap has-suffix">
+                <input type="number" id="u_mortality" placeholder="0.5" step="0.01" oninput="liveCalc()"/>
+                <span class="inp-suffix">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Premium Allocation Charges <span class="tip" data-tip="% deducted from each premium before investing">?</span></label>
+              <div class="inp-wrap has-suffix">
+                <input type="number" id="u_pac" placeholder="5" step="0.01" oninput="liveCalc()"/>
+                <span class="inp-suffix">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Fund Management Charges <span class="tip" data-tip="Annual % charged on total fund value (FMC)">?</span></label>
+              <div class="inp-wrap has-suffix">
+                <input type="number" id="u_fmc" placeholder="1.35" step="0.01" oninput="liveCalc()"/>
+                <span class="inp-suffix">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Policy Admin Charges <span class="tip" data-tip="Monthly flat fee deducted from fund each month">?</span></label>
+              <div class="inp-wrap has-suffix">
+                <input type="number" id="u_pac2" placeholder="0.1" step="0.01" oninput="liveCalc()"/>
+                <span class="inp-suffix">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ULIP Live Charge Impact -->
+          <div class="live-strip" style="margin-top:14px;grid-template-columns:1fr 1fr;">
+            <div class="live-item">
+              <div class="li-label">Total Annual Drag</div>
+              <div class="li-val c-red" id="u-total-charges">—</div>
+            </div>
+            <div class="live-item">
+              <div class="li-label">Net Return (after charges)</div>
+              <div class="li-val c-teal" id="u-net-return">—</div>
+            </div>
+          </div>
+
+        </div><!-- /ulip-fields -->
+
+      </div>
+    </div>
+
+  </div><!-- /row1 -->
+
+  <!-- ══ ROW 2: MF ASSUMPTIONS ══ -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-head">
+      <div class="cicon ci-blue">📈</div>
+      <div>
+        <div class="ctitle">Mutual Fund Comparison Assumptions</div>
+        <div class="csub">Used to project alternative investment scenario</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="fg fg-2">
+        <div class="field">
+          <label>Expected MF Return <span class="tip" data-tip="Long-term expected CAGR from equity mutual funds">?</span></label>
+          <div class="inp-wrap has-suffix">
+            <input type="number" id="mfReturn" value="12" step="0.5" oninput="liveCalc()"/>
+            <span class="inp-suffix">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>LTCG Tax on MF <span class="tip" data-tip="Long-term capital gains tax applied on MF profit after 1 year (currently 12.5% in India)">?</span></label>
+          <div class="inp-wrap has-suffix">
+            <input type="number" id="ltcg" value="12.5" step="0.5" oninput="liveCalc()"/>
+            <span class="inp-suffix">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYZE BUTTON -->
+  <div class="action-row" style="margin-bottom:28px;">
+    <button class="btn btn-analyze" onclick="analyze()">⚡ Analyze Policy Now</button>
+    <button class="btn btn-outline" onclick="resetAll()">↺ Reset All Fields</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       RESULTS DASHBOARD
+       ════════════════════════════════════════════ -->
+  <div id="results" class="fade-in">
+
+    <!-- CLIENT & POLICY HEADER -->
+    <div class="card" style="margin-bottom:18px;">
+      <div class="score-section" style="padding:20px 24px;">
+        <div class="score-ring-wrap" style="width:80px;height:80px;">
+          <svg viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="35" fill="none" stroke="rgba(37,99,235,0.2)" stroke-width="4"/>
+            <circle cx="40" cy="40" r="35" fill="rgba(37,99,235,0.08)"/>
+            <!-- Person icon -->
+            <circle cx="40" cy="30" r="10" fill="rgba(37,99,235,0.4)"/>
+            <path d="M20 58 Q20 44 40 44 Q60 44 60 58" fill="rgba(37,99,235,0.4)"/>
+          </svg>
+        </div>
+        <div style="flex:1;">
+          <div id="r-client-name" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--text);line-height:1.3;">Client</div>
+          <div id="r-policy-name" style="font-size:13px;color:var(--text2);margin-top:4px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRIC CARDS -->
+    <div class="metric-row">
+      <div class="mcard">
+        <div class="mc-icon">📜</div>
+        <div class="mc-lbl">Continue Policy IRR</div>
+        <div class="mc-val c-blue" id="mc-cont-irr">—</div>
+        <div class="mc-sub">Effective annual return</div>
+      </div>
+      <div class="mcard">
+        <div class="mc-icon">🔒</div>
+        <div class="mc-lbl">Paid-up IRR</div>
+        <div class="mc-val c-amber" id="mc-pu-irr">—</div>
+        <div class="mc-sub">If you stop premiums now</div>
+      </div>
+      <div class="mcard">
+        <div class="mc-icon">🚪</div>
+        <div class="mc-lbl">Surrender IRR</div>
+        <div class="mc-val c-red" id="mc-sur-irr">—</div>
+        <div class="mc-sub">Return earned so far</div>
+      </div>
+      <div class="mcard featured">
+        <div class="mc-icon">📈</div>
+        <div class="mc-lbl">MF Net Return</div>
+        <div class="mc-val c-green" id="mc-mf-ret">—</div>
+        <div class="mc-sub">After charges & LTCG tax</div>
+      </div>
+    </div>
+
+    <!-- CHART + TABLE -->
+    <div class="grid-2" style="margin-bottom:18px;">
+
+      <!-- CHART -->
+      <div class="card">
+        <div class="card-head">
+          <div class="cicon ci-blue">📊</div>
+          <div>
+            <div class="ctitle">Wealth Growth Projection</div>
+            <div class="csub">Policy vs MF from today to maturity</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrap">
+            <canvas id="growthChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARISON TABLE -->
+      <div class="card">
+        <div class="card-head">
+          <div class="cicon ci-gold">📋</div>
+          <div>
+            <div class="ctitle">Scenario Comparison</div>
+            <div class="csub">All options side by side</div>
+          </div>
+        </div>
+        <div class="ctable-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Maturity Value</th>
+                <th>IRR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="tr-continue">
+                <td><span class="scenario-name"><span class="sdot" style="background:#60a5fa"></span>Continue Policy</span></td>
+                <td id="td-cont-val">—</td>
+                <td id="td-cont-irr">—</td>
+              </tr>
+              <tr id="tr-paidup">
+                <td><span class="scenario-name"><span class="sdot" style="background:#fbbf24"></span>Paid-up <span class="tip" data-tip="Stop premiums, policy continues at reduced SA till maturity" style="display:inline-flex;">?</span></span></td>
+                <td id="td-pu-val">—</td>
+                <td id="td-pu-irr">—</td>
+              </tr>
+              <tr id="tr-surrender">
+                <td><span class="scenario-name"><span class="sdot" style="background:#f87171"></span>Surrender Now</span></td>
+                <td id="td-sur-val">—</td>
+                <td id="td-sur-irr">—</td>
+              </tr>
+              <tr id="tr-mf">
+                <td><span class="scenario-name"><span class="sdot" style="background:#4ade80"></span>Mutual Fund (MF)</span></td>
+                <td id="td-mf-val">—</td>
+                <td id="td-mf-irr">—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:16px 22px;">
+            <div class="wg-bar" id="wg-bar">
+              <div>
+                <div class="wg-label" id="wg-label">Wealth Difference (MF vs Continue)</div>
+                <div class="wg-sub" id="wg-sub">—</div>
+              </div>
+              <div class="wg-val" id="wg-val">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /grid-2 -->
+
+    <!-- POLICY HEALTH SCORE — Best Scenario -->
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-head">
+        <div class="cicon ci-purple">🏆</div>
+        <div>
+          <div class="ctitle">Best Option</div>
+          <div class="csub">Based on highest maturity value comparison</div>
+        </div>
+        <div style="margin-left:auto;font-size:11px;color:var(--text3);" id="r-policy-label"></div>
+      </div>
+      <div class="score-section">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="10"/>
+            <circle id="score-arc" cx="60" cy="60" r="52" fill="none"
+              stroke="#2563eb" stroke-width="10"
+              stroke-linecap="round"
+              stroke-dasharray="326.7"
+              stroke-dashoffset="326.7"
+              transform="rotate(-90 60 60)"
+              style="transition:stroke-dashoffset 1.2s ease,stroke .5s"/>
+          </svg>
+          <div class="score-center">
+            <div class="score-num" id="score-num" style="color:var(--gold);font-size:16px;">—</div>
+            <div class="score-lbl" id="score-lbl">Lakhs</div>
+          </div>
+        </div>
+        <div class="score-details">
+          <div class="score-title" id="score-verdict">Analyzing...</div>
+          <div class="score-desc" id="score-desc">Fill in policy details and click Analyze.</div>
+          <div class="score-tags" id="score-tags"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARGES BREAKDOWN (ULIP only) -->
+    <div class="card" id="ulip-charges-card" style="display:none;margin-bottom:18px;">
+      <div class="card-head">
+        <div class="cicon ci-red">⚡</div>
+        <div>
+          <div class="ctitle">ULIP Charges Breakdown</div>
+          <div class="csub">Annual drag on your investment returns</div>
+        </div>
+        <div style="margin-left:auto;">
+          <span style="font-size:11px;color:var(--text3);">Total charge drag: </span>
+          <span style="font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--red);" id="ulip-total-drag">—</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="charge-bars" id="charge-bars"></div>
+        <div style="margin-top:14px;font-size:12px;color:var(--text3);line-height:1.6;">
+          ⚠️ These charges reduce your effective return. A net return of <strong id="ulip-net-ret-text" style="color:var(--teal);">—</strong> 
+          is what your fund actually grows at after deducting all charges from the declared fund return of <strong id="ulip-gross-ret" style="color:var(--text2);">—</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDATION + BREAKEVEN -->
+    <div class="grid-2" style="margin-bottom:18px;">
+
+      <!-- RECOMMENDATION -->
+      <div class="card">
+        <div class="card-head">
+          <div class="cicon ci-green">🧠</div>
+          <div>
+            <div class="ctitle">Advisor Recommendation</div>
+            <div class="csub">Based on IRR, stage, and opportunity cost</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="rec-box" id="rec-box">
+            <div class="rec-emoji" id="rec-emoji">🔍</div>
+            <div>
+              <div class="rec-title" id="rec-title">Analyzing...</div>
+              <div class="rec-body" id="rec-body">Please fill in the fields and click Analyze.</div>
+            </div>
+          </div>
+
+          <!-- ACTION STEPS -->
+          <div style="margin-top:16px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Suggested Next Steps</div>
+            <div id="action-steps" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BREAKEVEN + DETAIL GRID -->
+      <div class="card">
+        <div class="card-head">
+          <div class="cicon ci-teal">📐</div>
+          <div>
+            <div class="ctitle">Key Calculation Details</div>
+            <div class="csub">Computed values used in analysis</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="detail-grid" id="detail-grid"></div>
+
+          <!-- Breakeven Timeline -->
+          <div style="margin-top:20px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">Policy Premium Completion Timeline</div>
+            <div class="breakeven-line">
+              <div class="bel-fill" id="bel-fill" style="width:0%"></div>
+              <div class="bel-marker" id="bel-marker" style="left:0%">
+                <div class="bel-year" id="bel-year">Yr 0</div>
+              </div>
+            </div>
+            <div class="bel-labels">
+              <span>Start</span>
+              <span id="bel-mid">—</span>
+              <span>Maturity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div style="font-size:11px;color:var(--text3);text-align:center;line-height:1.7;padding:0 40px;">
+      ⚠️ This tool is for advisor use only. All projections are illustrative and based on inputs provided. 
+      IRR calculations use Newton-Raphson XIRR method. Actual policy benefits may vary. 
+      Consult the policy document and insurer for exact surrender values. 
+      Mutual fund returns are not guaranteed.
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /app -->
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT — ALL CALCULATIONS
+     ════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ─── GLOBALS ─────────────────────────────────
+let chartInst = null;
+let fvMode = 'manual'; // 'manual' | 'nav'
+
+// Frequency multipliers → installments per year
+const FREQ_MAP = { '12': 12, '4': 4, '2': 2, '1': 1 };
+const FREQ_LABEL = { '12': 'Monthly', '4': 'Quarterly', '2': 'Half Yearly', '1': 'Yearly' };
+
+// ─── INIT ─────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('current-date').textContent =
+    new Date().toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'});
+
+  // Default start date 5 years ago, maturity 20 years from start
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 5);
+  document.getElementById('startDate').value = d.toISOString().split('T')[0];
+  document.getElementById('policyTerm').value = 20;
+
+  // Trigger initial maturity date calculation
+  onStartDateChange();
+
+  // Prevent scroll wheel and arrow keys from changing number inputs
+  document.addEventListener('wheel', function(e) {
+    if (e.target.type === 'number') { e.target.blur(); }
+  }, {passive: true});
+  document.addEventListener('keydown', function(e) {
+    if (e.target.type === 'number' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+      e.preventDefault();
+    }
+  });
+});
+
+// ─── CATEGORY SWITCH ──────────────────────────
+function onCategoryChange() {
+  const cat = document.getElementById('policyCategory').value;
+  const isUlip = cat === 'ulip';
+  document.getElementById('subtype-wrap').style.display = isUlip ? 'none' : '';
+  document.getElementById('trad-fields').style.display  = isUlip ? 'none' : '';
+  document.getElementById('ulip-fields').style.display  = isUlip ? '' : 'none';
+  document.getElementById('bs-card-sub').textContent = isUlip
+    ? 'ULIP fund value, surrender charges and all annual charges'
+    : 'Traditional policy bonus and surrender values';
+  liveCalc();
+}
+
+// ─── PREMIUM FREQUENCY CHANGE ─────────────────
+function onFrequencyChange() {
+  const freq = document.getElementById('premiumFrequency').value;
+  const label = FREQ_LABEL[freq];
+  document.getElementById('installment-label').childNodes[0].textContent =
+    `Premium Per Installment (${label}) `;
+  onInstallmentChange(); // recalculate annual total
+}
+
+// ─── INSTALLMENT → ANNUAL TOTAL ───────────────
+function onInstallmentChange() {
+  const freq        = +document.getElementById('premiumFrequency').value || 1;
+  const installment = +document.getElementById('installmentPremium').value || 0;
+  const annual      = installment * freq;
+  // Write to annual premium field (read-only display)
+  document.getElementById('annualPremium').value = annual ? annual.toFixed(2) : '';
+  liveCalc();
+}
+
+// ─── DATE SYNC: START DATE + TERM → MATURITY DATE ─────────
+function onStartDateChange() {
+  const startVal = document.getElementById('startDate').value;
+  const term     = +document.getElementById('policyTerm').value;
+  if (startVal && term) {
+    const start = new Date(startVal);
+    start.setFullYear(start.getFullYear() + term);
+    // Don't let maturity-change handler fire back
+    document.getElementById('maturityDate')._syncing = true;
+    document.getElementById('maturityDate').value = start.toISOString().split('T')[0];
+    document.getElementById('maturityDate')._syncing = false;
+  }
+  liveCalc();
+}
+
+// ─── DATE SYNC: POLICY TERM CHANGED → UPDATE MATURITY DATE ─
+function onPolicyTermChange() {
+  onStartDateChange(); // re-derive maturity date from start + new term
+  liveCalc();
+}
+
+// ─── DATE SYNC: MATURITY DATE → BACK-CALCULATE POLICY TERM ─
+function onMaturityDateChange() {
+  if (document.getElementById('maturityDate')._syncing) return;
+  const startVal    = document.getElementById('startDate').value;
+  const maturityVal = document.getElementById('maturityDate').value;
+  if (startVal && maturityVal) {
+    const start   = new Date(startVal);
+    const maturity= new Date(maturityVal);
+    // Calculate difference in years (rounded to 1 decimal)
+    const diffMs   = maturity - start;
+    const diffYrs  = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+    const rounded  = Math.round(diffYrs * 10) / 10;
+    if (rounded > 0) {
+      document.getElementById('policyTerm')._syncing = true;
+      document.getElementById('policyTerm').value = Math.round(rounded);
+      document.getElementById('policyTerm')._syncing = false;
+    }
+  }
+  liveCalc();
+}
+
+// ─── FUND VALUE MODE TOGGLE (ULIP) ────────────
+function setFVMode(mode) {
+  fvMode = mode;
+  document.getElementById('tgl-manual').classList.toggle('active', mode === 'manual');
+  document.getElementById('tgl-nav').classList.toggle('active', mode === 'nav');
+  document.getElementById('nav-calc').style.display = mode === 'nav' ? '' : 'none';
+  document.getElementById('u_fundValue').readOnly = mode === 'nav';
+  if (mode === 'manual') document.getElementById('u_fundValue').readOnly = false;
+}
+
+// ─── NAV × UNITS AUTO-CALC ───────────────────
+function calcNavFV() {
+  const nav   = +document.getElementById('u_nav').value   || 0;
+  const units = +document.getElementById('u_units').value || 0;
+  if (nav && units) {
+    document.getElementById('u_fundValue').value = (nav * units).toFixed(2);
+  }
+  liveCalc();
+}
+
+// ─── UTILITY: FORMAT ₹ ───────────────────────
+function inr(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(Math.round(n));
+  const s = abs.toString();
+  if (s.length <= 3) return sign + '₹' + s;
+  const last3 = s.slice(-3);
+  const rest  = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+  return sign + '₹' + rest + ',' + last3;
+}
+
+function pct(n, d=2) {
+  if (n === null || isNaN(n)) return '—';
+  return n.toFixed(d) + '%';
+}
+
+function irrPill(v) {
+  if (isNaN(v) || v === null) return '<span class="irr-pill pill-gold">—</span>';
+  if (v >= 8)  return `<span class="irr-pill pill-green">${pct(v)}</span>`;
+  if (v >= 5)  return `<span class="irr-pill pill-amber">${pct(v)}</span>`;
+  return             `<span class="irr-pill pill-red">${pct(v)}</span>`;
+}
+
+// ─── XIRR (Newton-Raphson) ────────────────────
+function xirr(cfs, times) {
+  let r = 0.1;
+  for (let iter = 0; iter < 2000; iter++) {
+    let npv = 0, dnpv = 0;
+    for (let i = 0; i < cfs.length; i++) {
+      const t = times[i];
+      const f = Math.pow(1 + r, t);
+      npv  += cfs[i] / f;
+      dnpv -= t * cfs[i] / (f * (1 + r));
+    }
+    if (Math.abs(dnpv) < 1e-14) break;
+    const nr = r - npv / dnpv;
+    if (Math.abs(nr - r) < 1e-9) return nr;
+    r = Math.max(-0.99, Math.min(nr, 20));
+  }
+  return r;
+}
+
+// ─── SIP FUTURE VALUE ─────────────────────────
+function sipFV(pmt, rate, n) {
+  const r = rate / 100;
+  if (n <= 0) return 0;
+  if (r === 0) return pmt * n;
+  return pmt * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+}
+
+// ─── LUMP FUTURE VALUE ────────────────────────
+function lumpFV(pv, rate, n) {
+  return pv * Math.pow(1 + rate / 100, n);
+}
+
+// ─── LIVE CALCULATIONS (no results shown) ────
+function liveCalc() {
+  const ap   = +document.getElementById('annualPremium').value  || 0;
+  const paid = +document.getElementById('premiumsPaid').value   || 0;
+  const pt   = +document.getElementById('policyTerm').value     || 0;
+  const pmt  = +document.getElementById('premiumTerm').value    || 0;
+  const sa   = +document.getElementById('sumAssured').value     || 0;
+
+  const autoTPP = ap * paid;
+  const tpp = +document.getElementById('totalPremiumPaid').value || autoTPP;
+  if (ap && paid && !document.getElementById('totalPremiumPaid')._dirty) {
+    document.getElementById('totalPremiumPaid').value = autoTPP || '';
+  }
+
+  // Live strip
+  if (ap && paid && pt) {
+    document.getElementById('live-strip').style.display = 'grid';
+    document.getElementById('ls-annual').textContent    = inr(ap);
+    document.getElementById('ls-paid').textContent      = inr(tpp);
+    document.getElementById('ls-remaining').textContent = Math.max(0, pt - paid) + ' yrs';
+    document.getElementById('ls-pct').textContent       = pt > 0 ? pct((paid / pt) * 100, 0) : '—';
+  }
+
+  const isUlip = document.getElementById('policyCategory').value === 'ulip';
+
+  if (!isUlip) {
+    const revBonusRate = +document.getElementById('t_revBonusRate').value || 0;
+    const termBonusRate= +document.getElementById('t_termBonusRate').value|| 0;
+    const gsvPct       = +document.getElementById('t_gsvPct').value      || 0;
+    const ssvFac       = +document.getElementById('t_svFactor').value    || 0;
+
+    // ── Auto-calc: Revisionary Bonus = (SA / 1000) × Rate ──
+    const revBonus = (sa / 1000) * revBonusRate;
+    document.getElementById('t_revBonus').value = revBonus ? revBonus.toFixed(2) : '';
+    document.getElementById('tip-revBonus').setAttribute('data-tip',
+      `Formula: (SA ÷ 1000) × Rate\n= (${inr(sa)} ÷ 1000) × ${revBonusRate}\n= ${inr(revBonus)} per year`);
+
+    // ── Auto-calc: Terminal Bonus = (SA / 1000) × Terminal Rate ──
+    const termBonus = (sa / 1000) * termBonusRate;
+    document.getElementById('t_termBonus').value = termBonus ? termBonus.toFixed(2) : '';
+    document.getElementById('tip-termBonus').setAttribute('data-tip',
+      `Formula: (SA ÷ 1000) × Terminal Rate\n= (${inr(sa)} ÷ 1000) × ${termBonusRate}\n= ${inr(termBonus)}`);
+
+    // ── Auto-calc: Paid-up Value ──
+    // PV_base = (AP × YearsPaid) + (RevBonus × YearsPaid)
+    // Paid-up Value = PV_base × (1.027)^(PolicyTerm − YearsPaid)
+    const PAIDUP_RATE = 0.0275; // Fixed 2.75%
+    const pvBase = (ap * paid) + (revBonus * paid);
+    const yearsRemaining = Math.max(0, pt - paid);
+    const paidUpVal = pvBase * Math.pow(1 + PAIDUP_RATE, yearsRemaining);
+    document.getElementById('t_paidup').value = paidUpVal ? paidUpVal.toFixed(2) : '';
+    document.getElementById('tip-paidup').setAttribute('data-tip',
+      `Step 1: Total Premium Paid\n= AP × YrsPaid = ${inr(ap)} × ${paid} = ${inr(ap * paid)}\n\nStep 2: Accrued Bonus\n= RevBonus × YrsPaid = ${inr(revBonus)} × ${paid} = ${inr(revBonus * paid)}\n\nStep 3: PV Base\n= ${inr(ap * paid)} + ${inr(revBonus * paid)} = ${inr(pvBase)}\n\nStep 4: FV (Rate=2.75%, NPER=${yearsRemaining})\n= ${inr(pvBase)} × (1.0275)^${yearsRemaining}\n= ${inr(paidUpVal)}`);
+
+    // ── Auto-calc: SSV ──
+    // Part A: Accrued Bonus × GSV% = RevBonus × YearsPaid × GSV%
+    const accruedBonus = revBonus * paid;
+    const partA = accruedBonus * (gsvPct / 100);
+    // Part B: Eligible Premium × SV Factor = AP × (YearsPaid - 1) × SVFactor
+    const eligiblePrem = ap * Math.max(0, paid - 1);
+    const partB = eligiblePrem * ssvFac;
+    const ssvCalc = partA + partB;
+    document.getElementById('t_ssv').value = ssvCalc ? ssvCalc.toFixed(2) : '';
+    document.getElementById('tip-ssv').setAttribute('data-tip',
+      `Part A (Bonus portion):\nRevBonus × YrsPaid = ${inr(revBonus)} × ${paid} = ${inr(accruedBonus)}\n× GSV ${gsvPct}% = ${inr(partA)}\n\nPart B (Premium portion):\nAP × (YrsPaid−1) = ${inr(ap)} × ${Math.max(0,paid-1)} = ${inr(eligiblePrem)}\n× SV Factor ${ssvFac} = ${inr(partB)}\n\nSSV = ${inr(partA)} + ${inr(partB)} = ${inr(ssvCalc)}`);
+
+    // ── GSV = Total Premium Paid × GSV% ──
+    const gsv = tpp * (gsvPct / 100);
+    const finalSV = Math.max(gsv, ssvCalc);
+
+    document.getElementById('sv-gsv').textContent   = gsv      ? inr(gsv)      : '—';
+    document.getElementById('sv-ssv').textContent   = ssvCalc  ? inr(ssvCalc)  : '—';
+    document.getElementById('sv-final').textContent = finalSV  ? inr(finalSV)  : '—';
+    document.getElementById('sv-basis').textContent = finalSV
+      ? (gsv >= ssvCalc ? 'Higher: GSV' : 'Higher: SSV') : '';
+  } else {
+    const mortality = +document.getElementById('u_mortality').value || 0;
+    const pac       = +document.getElementById('u_pac').value       || 0;
+    const fmc       = +document.getElementById('u_fmc').value       || 0;
+    const adminC    = +document.getElementById('u_pac2').value      || 0;
+    const mfR       = +document.getElementById('mfReturn').value    || 12;
+    const totalDrag = mortality + fmc + adminC;
+    const netR      = Math.max(0, mfR - totalDrag);
+    document.getElementById('u-total-charges').textContent = pct(totalDrag + pac / 10);
+    document.getElementById('u-net-return').textContent    = pct(netR);
+  }
+}
+
+// Track user overrides
+document.getElementById('totalPremiumPaid').addEventListener('input', function(){
+  this._dirty = !!this.value;
+  liveCalc();
+});
+
+// ─── MAIN ANALYSIS ────────────────────────────
+function analyze() {
+  const isUlip   = document.getElementById('policyCategory').value === 'ulip';
+  const subtype  = document.getElementById('policySubtype').value;
+  const sa       = +document.getElementById('sumAssured').value    || 0;
+  const ap       = +document.getElementById('annualPremium').value || 0;
+  const pt       = +document.getElementById('policyTerm').value    || 0;
+  const pmt      = +document.getElementById('premiumTerm').value   || 0;
+  const paid     = +document.getElementById('premiumsPaid').value  || 0;
+  const tpp      = +document.getElementById('totalPremiumPaid').value || (ap * paid);
+  const mfReturn = +document.getElementById('mfReturn').value      || 12;
+  const inflation= 6;   // hardcoded
+  const ltcg     = +document.getElementById('ltcg').value          || 12.5;
+
+  if (!sa || !ap || !pt || !pmt || !paid) {
+    alert('⚠️ Please fill in all required policy details:\nSum Assured, Annual Premium, Policy Term, Premium Paying Term, Years Paid');
+    return;
+  }
+
+  const yearsLeft = pt - paid;
+  const futurePremYears = Math.max(0, pmt - paid);
+  const mfNetRate = mfReturn;
+
+  let maturityValue = 0, continueSV = 0, paidUpMaturity = 0, paidUpSA = 0;
+  let continueIRR = NaN, paidUpIRR = NaN, surrenderIRR = NaN;
+  let finalSV = 0;
+
+  if (!isUlip) {
+    const revBonusRate = +document.getElementById('t_revBonusRate').value || 0;
+    const termBonusRate= +document.getElementById('t_termBonusRate').value|| 0;
+
+    // Per-year revisionary bonus
+    const revBonusPerYr = (sa / 1000) * revBonusRate;
+    // Total revisionary bonus over full policy term
+    const revBonusTotal = revBonusPerYr * pt;
+    // Terminal bonus (one-time at maturity)
+    const termBonus = (sa / 1000) * termBonusRate;
+
+    // Maturity = SA + total rev bonus + terminal bonus
+    maturityValue = sa + revBonusTotal + termBonus;
+
+    // Paid-up Value using FV formula
+    // PV_base = (AP × YearsPaid) + (RevBonusPerYr × YearsPaid)
+    // Paid-up Value = PV_base × (1.027)^(PolicyTerm − YearsPaid)
+    const PAIDUP_RATE_A = 0.0275;
+    const pvBaseA = (ap * paid) + (revBonusPerYr * paid);
+    paidUpSA = pvBaseA * Math.pow(1 + PAIDUP_RATE_A, yearsLeft);
+    paidUpMaturity = paidUpSA; // paid-up value IS the maturity value for paid-up scenario
+
+    const gsvPct    = +document.getElementById('t_gsvPct').value    || 0;
+    const ssvFactor = +document.getElementById('t_svFactor').value  || 0;
+
+    // GSV = Total Premium Paid × GSV%
+    const gsv = tpp * (gsvPct / 100);
+
+    // SSV = Part A (bonus portion) + Part B (premium portion)
+    const accruedBonus = revBonusPerYr * paid;
+    const partA = accruedBonus * (gsvPct / 100);
+    const eligiblePrem = ap * Math.max(0, paid - 1);
+    const partB = eligiblePrem * ssvFactor;
+    const ssvCalc = partA + partB;
+
+    finalSV = Math.max(gsv, ssvCalc);
+    continueSV = finalSV;
+
+    {
+      const cfs = [], ts = [];
+      for (let y = 0; y < pmt; y++) { cfs.push(-ap); ts.push(y); }
+      cfs.push(maturityValue); ts.push(pt);
+      continueIRR = xirr(cfs, ts) * 100;
+    }
+
+    {
+      const cfs = [], ts = [];
+      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+      cfs.push(paidUpMaturity); ts.push(pt);
+      paidUpIRR = xirr(cfs, ts) * 100;
+    }
+
+    {
+      const cfs = [], ts = [];
+      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+      cfs.push(finalSV); ts.push(paid);
+      surrenderIRR = xirr(cfs, ts) * 100;
+    }
+
+  } else {
+    const fundValue    = +document.getElementById('u_fundValue').value        || 0;
+    const surChargePct = +document.getElementById('u_surrenderCharge').value  || 0;
+    const paidUpFV     = +document.getElementById('u_paidup').value           || fundValue;
+    const mortalityPct = +document.getElementById('u_mortality').value        || 0;
+    const pacPct       = +document.getElementById('u_pac').value              || 0;
+    const fmcPct       = +document.getElementById('u_fmc').value              || 0;
+    const adminPct     = +document.getElementById('u_pac2').value             || 0;
+
+    const totalChargeDrag = mortalityPct + fmcPct + adminPct;
+    const effectivePremAlloc = (1 - pacPct / 100);
+
+    const ulipNetRate = Math.max(0, mfNetRate - totalChargeDrag);
+
+    finalSV = fundValue * (1 - surChargePct / 100);
+    continueSV = finalSV;
+
+    maturityValue = lumpFV(fundValue, ulipNetRate, yearsLeft)
+                  + sipFV(ap * effectivePremAlloc, ulipNetRate, futurePremYears);
+
+    paidUpSA = paidUpFV;
+    paidUpMaturity = lumpFV(paidUpFV, ulipNetRate, yearsLeft);
+
+    {
+      const cfs = [], ts = [];
+      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+      for (let y = paid; y < pmt; y++) { cfs.push(-ap); ts.push(y); }
+      cfs.push(maturityValue); ts.push(pt);
+      continueIRR = xirr(cfs, ts) * 100;
+    }
+
+    {
+      const cfs = [], ts = [];
+      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+      cfs.push(paidUpMaturity); ts.push(pt);
+      paidUpIRR = xirr(cfs, ts) * 100;
+    }
+
+    {
+      const cfs = [], ts = [];
+      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+      cfs.push(finalSV); ts.push(paid);
+      surrenderIRR = xirr(cfs, ts) * 100;
+    }
+  }
+
+  const mfLump    = lumpFV(finalSV, mfNetRate, yearsLeft);
+  // SIP grows for futurePremYears, then the corpus compounds for remaining years
+  const mfSIPatEnd = sipFV(ap, mfNetRate, futurePremYears);
+  const sipExtraYears = yearsLeft - futurePremYears;
+  const mfSIP     = sipExtraYears > 0 ? lumpFV(mfSIPatEnd, mfNetRate, sipExtraYears) : mfSIPatEnd;
+  const mfGross   = mfLump + mfSIP;
+
+  const mfCostBasis = finalSV + (ap * futurePremYears);
+  const mfGain      = Math.max(0, mfGross - mfCostBasis);
+  const mfTax       = mfGain * (ltcg / 100);
+  const mfFinal     = mfGross - mfTax;
+
+  const realContinue  = continueIRR  ? ((1 + continueIRR/100)/(1 + inflation/100) - 1)*100 : NaN;
+  const realPaidUp    = paidUpIRR    ? ((1 + paidUpIRR/100)/(1 + inflation/100) - 1)*100   : NaN;
+  const realSurrender = surrenderIRR ? ((1 + surrenderIRR/100)/(1 + inflation/100) - 1)*100: NaN;
+  const realMF        = mfReturn     ? ((1 + mfNetRate/100)/(1 + inflation/100) - 1)*100   : NaN;
+
+  const wealthGain = mfFinal - maturityValue;
+
+  // ══════════════════════════════════════════
+  // BEST SCENARIO — Simple highest maturity value wins
+  // ══════════════════════════════════════════
+  const scenarios = [
+    { name: 'Continue Policy',  value: maturityValue,  type: 'continue', emoji: '📜', color: '#3b82f6' },
+    { name: 'Go Paid-up',       value: paidUpMaturity,  type: 'paidup',   emoji: '🔒', color: '#d97706' },
+    { name: 'Mutual Fund is Better', value: mfFinal,    type: 'mf',       emoji: '📈', color: '#16a34a' },
+  ];
+  scenarios.sort((a, b) => b.value - a.value);
+  const winner = scenarios[0];
+  const runnerUp = scenarios[1];
+  const diff = winner.value - runnerUp.value;
+
+  const mfGapPct = maturityValue > 0 ? ((mfFinal - maturityValue) / maturityValue) * 100 : 0;
+  const completion = pt > 0 ? paid / pt : 0;
+
+  const nearMaturity    = yearsLeft <= 3;
+  const veryHighMFGap   = mfGapPct > 40;
+  const highMFGap       = mfGapPct > 25;
+  const lowIRR          = continueIRR < 6;
+  const veryLowIRR      = continueIRR < 4;
+  const earlyInPolicy   = completion < 0.3;
+  const paidUpBetter    = !isNaN(paidUpIRR) && paidUpIRR > surrenderIRR;
+
+  let recType, recEmoji, recTitleText, recBodyText, actionSteps;
+
+  if (winner.type === 'mf') {
+    const mfWithTax = mfFinal + 15000;
+    recType = 'surrender';
+    recEmoji = '📈';
+    recTitleText = 'Mutual Fund is the Better Option';
+    recBodyText = `Mutual Fund gives the highest maturity value of ${inr(mfFinal)}, which is ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)}). Surrendering the policy and investing in mutual funds will generate significantly more wealth over the remaining ${yearsLeft} years.`;
+    actionSteps = [
+      `🏦 Get exact surrender value quotation from insurer`,
+      `📊 Invest surrender value (${inr(finalSV)}) as lump sum in equity mutual funds`,
+      `📈 Start SIP of ${inr(ap)} per year with the saved premium amount`,
+      `🛡️ Buy a pure term insurance plan for life cover (much cheaper)`,
+      `💡 Note: If you have not booked ₹1.25 Lakh exemption under Section 80C, the tax benefit adds ₹15,000. Total MF value: ${inr(mfFinal)} + ₹15,000 = ${inr(mfWithTax)}`
+    ];
+  } else if (winner.type === 'paidup') {
+    recType = 'paidup';
+    recEmoji = '⏸️';
+    recTitleText = 'Go Paid-up — Best Option';
+    recBodyText = `Making the policy paid-up gives the highest maturity value of ${inr(paidUpMaturity)}, which is ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)}). Stop paying premiums now and let the policy continue till maturity at a paid-up value of ${inr(paidUpSA)}.`;
+    actionSteps = [
+      `📝 Submit Paid-up application to the insurer`,
+      `📈 Start SIP of ${inr(ap)} per year in equity mutual funds with the saved premium`,
+      `🔍 Review the paid-up policy periodically`,
+      `🛡️ Check if existing life cover is adequate`
+    ];
+  } else {
+    recType = 'continue';
+    recEmoji = '✅';
+    recTitleText = 'Continue the Policy';
+    recBodyText = `Continuing the policy gives the highest maturity value of ${inr(maturityValue)}, which is ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)}). The policy return of ${pct(continueIRR)} is reasonable for a risk-free, guaranteed product. Recommend continuing the policy.`;
+    actionSteps = [
+      '📅 Ensure all future premiums are paid on time',
+      '📄 Update nominee details if required',
+      '📅 Mark the maturity date in your calendar',
+      '📈 Consider additional mutual fund investments separately'
+    ];
+  }
+
+  // ── RENDER ──
+  // Score ring — show winning scenario value
+  const scoreArc = document.getElementById('score-arc');
+  const circumference = 326.7;
+  scoreArc.style.strokeDashoffset = 0; // full circle
+  scoreArc.style.stroke = winner.color;
+  document.getElementById('score-num').textContent = '₹' + (winner.value / 100000).toFixed(2);
+  document.getElementById('score-num').style.color = winner.color;
+
+  // Title — winning scenario name
+  document.getElementById('score-verdict').textContent = winner.name;
+  document.getElementById('score-desc').textContent =
+    `${winner.name} gives the highest maturity value · ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)})`;
+
+  // Policy Name at top of results
+  const clientNameVal = document.getElementById('clientName').value || 'Client';
+  const policyNameVal = document.getElementById('policyName').value || 'Unnamed Policy';
+  const policyTypeVal = isUlip ? 'ULIP' : document.getElementById('policySubtype').selectedOptions[0].text;
+  document.getElementById('r-client-name').textContent = clientNameVal;
+  document.getElementById('r-policy-name').textContent = policyNameVal + ' · ' + policyTypeVal + ' · ' + pt + ' Years Term';
+
+  document.getElementById('r-policy-label').textContent =
+    policyTypeVal + ' · ' + policyNameVal;
+
+  // Tags — show all scenario values
+  const tags = [
+    {t: `Continue: ${inr(maturityValue)}`, c: winner.type === 'continue' ? 'stag-green' : 'stag-gold'},
+    {t: `Paid-up: ${inr(paidUpMaturity)}`, c: winner.type === 'paidup' ? 'stag-green' : 'stag-gold'},
+    {t: `MF: ${inr(mfFinal)}`, c: winner.type === 'mf' ? 'stag-green' : 'stag-gold'},
+  ];
+
+  document.getElementById('score-tags').innerHTML = tags
+    .map(t => `<span class="stag ${t.c}">${t.t}</span>`).join('');
+
+  document.getElementById('mc-cont-irr').textContent = pct(continueIRR);
+  document.getElementById('mc-pu-irr').textContent   = pct(paidUpIRR);
+  document.getElementById('mc-sur-irr').textContent  = pct(surrenderIRR);
+  document.getElementById('mc-mf-ret').textContent   = pct(mfNetRate);
+
+  colorIrrCard('mc-cont-irr', continueIRR);
+  colorIrrCard('mc-pu-irr',   paidUpIRR);
+  colorIrrCard('mc-sur-irr',  surrenderIRR);
+
+  document.getElementById('td-cont-val').textContent  = inr(maturityValue);
+  document.getElementById('td-cont-irr').innerHTML    = irrPill(continueIRR);
+
+  document.getElementById('td-pu-val').textContent    = inr(paidUpMaturity);
+  document.getElementById('td-pu-irr').innerHTML      = irrPill(paidUpIRR);
+
+  document.getElementById('td-sur-val').textContent   = inr(finalSV);
+  document.getElementById('td-sur-irr').innerHTML     = irrPill(surrenderIRR);
+
+  document.getElementById('td-mf-val').textContent    = inr(mfFinal);
+  document.getElementById('td-mf-irr').innerHTML      = `<span class="irr-pill pill-green">${pct(mfNetRate)}</span>`;
+
+  const values = [maturityValue, paidUpMaturity, finalSV, mfFinal];
+  const maxVal = Math.max(...values);
+  const rows = ['tr-continue','tr-paidup','tr-surrender','tr-mf'];
+  const vals  = [maturityValue, paidUpMaturity, finalSV, mfFinal];
+  rows.forEach((id,i) => {
+    document.getElementById(id).className = vals[i] === maxVal ? 'tr-best' : '';
+  });
+
+  const wgBar = document.getElementById('wg-bar');
+  wgBar.className = 'wg-bar ' + (wealthGain >= 0 ? 'pos' : 'neg');
+  document.getElementById('wg-val').className = 'wg-val ' + (wealthGain >= 0 ? 'pos' : 'neg');
+  document.getElementById('wg-val').textContent = (wealthGain >= 0 ? '+' : '') + inr(wealthGain);
+  document.getElementById('wg-label').textContent = wealthGain >= 0
+    ? 'MF generates more wealth than continuing policy'
+    : 'Policy generates more wealth than MF in this case';
+  document.getElementById('wg-sub').textContent =
+    `${inr(mfFinal)} (MF) vs ${inr(maturityValue)} (Policy) at year ${pt}`;
+
+  const recBox = document.getElementById('rec-box');
+  recBox.className = 'rec-box ' + recType;
+  document.getElementById('rec-emoji').textContent = recEmoji;
+  document.getElementById('rec-title').className = 'rec-title ' + recType;
+  document.getElementById('rec-title').textContent = recTitleText;
+  document.getElementById('rec-body').textContent = recBodyText;
+  document.getElementById('action-steps').innerHTML = actionSteps
+    .map(s => `<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);">${s}</div>`)
+    .join('');
+
+  document.getElementById('detail-grid').innerHTML = [
+    {l:'Maturity Value',     v: inr(maturityValue)},
+    {l:'Paid-up SA / FV',   v: inr(paidUpSA)},
+    {l:'Surrender Value',    v: inr(finalSV)},
+    {l:'MF Value (post-tax)',v: inr(mfFinal)},
+    {l:'MF Tax (LTCG)',      v: inr(mfTax)},
+    {l:'Years to Maturity',  v: yearsLeft + ' yrs'},
+    {l:'Future Premiums Left',v: futurePremYears + ' yrs'},
+    {l:'Completion %',       v: pct((paid/pt)*100, 0)},
+    {l:'MF Advantage %',     v: pct(mfGapPct, 1)},
+  ].map(d => `
+    <div class="detail-item">
+      <div class="di-label">${d.l}</div>
+      <div class="di-val">${d.v}</div>
+    </div>
+  `).join('');
+
+  const pctDone = Math.min(100, Math.round((paid / pt) * 100));
+  document.getElementById('bel-fill').style.width = pctDone + '%';
+  document.getElementById('bel-marker').style.left = pctDone + '%';
+  document.getElementById('bel-year').textContent = `Yr ${paid}`;
+  document.getElementById('bel-mid').textContent  = `Yr ${Math.round(pt/2)}`;
+
+  if (isUlip) {
+    document.getElementById('ulip-charges-card').style.display = '';
+    const mortalityPct = +document.getElementById('u_mortality').value || 0;
+    const pac          = +document.getElementById('u_pac').value       || 0;
+    const fmc          = +document.getElementById('u_fmc').value       || 0;
+    const adminC       = +document.getElementById('u_pac2').value      || 0;
+    const totalDrag    = mortalityPct + fmc + adminC + pac * 0.1;
+
+    document.getElementById('ulip-total-drag').textContent = pct(totalDrag, 2);
+    document.getElementById('ulip-net-ret-text').textContent = pct(mfNetRate - mortalityPct - fmc - adminC);
+    document.getElementById('ulip-gross-ret').textContent = pct(mfReturn);
+
+    const charges = [
+      {name:'Premium Allocation', val: pac},
+      {name:'Fund Management (FMC)', val: fmc},
+      {name:'Mortality Charges', val: mortalityPct},
+      {name:'Policy Admin Charges', val: adminC},
+    ];
+    const maxC = Math.max(...charges.map(c => c.val), 0.01);
+    document.getElementById('charge-bars').innerHTML = charges.map(c => `
+      <div class="charge-row">
+        <span class="charge-name">${c.name}</span>
+        <div class="charge-bar-bg"><div class="charge-bar-fill" style="width:${Math.min(100,(c.val/maxC)*100)}%"></div></div>
+        <span class="charge-pct">${pct(c.val)}</span>
+      </div>
+    `).join('');
+  } else {
+    document.getElementById('ulip-charges-card').style.display = 'none';
+  }
+
+  buildChart(ap, paid, pt, pmt, maturityValue, paidUpMaturity, finalSV, mfNetRate, mfFinal, yearsLeft, ltcg, mfCostBasis);
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  resultsEl.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function colorIrrCard(id, irr) {
+  const el = document.getElementById(id);
+  if (isNaN(irr)) { el.className = 'mc-val'; return; }
+  el.className = 'mc-val ' + (irr >= 7 ? 'c-green' : irr >= 5 ? 'c-amber' : 'c-red');
+}
+
+function buildChart(ap, paid, pt, pmt, maturity, paidUpMat, sv, mfRate, mfFinal, yearsLeft, ltcg, mfBasis) {
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+
+  const labels = [], cPolicy = [], cPaidUp = [], cMF = [];
+  const r = mfRate / 100;
+
+  for (let y = 0; y <= yearsLeft; y++) {
+    labels.push(`+${y}yr`);
+    cPolicy.push(Math.round(sv + (maturity - sv) * (y / Math.max(yearsLeft, 1))));
+    cPaidUp.push(Math.round(sv + (paidUpMat - sv) * (y / Math.max(yearsLeft, 1))));
+    const futurePremYears = Math.max(0, pmt - paid);
+    const lump = sv * Math.pow(1 + r, y);
+    // SIP: contributions for min(y, futurePremYears) years
+    // then the accumulated SIP corpus compounds for remaining years
+    let sip = 0;
+    if (y > 0 && futurePremYears > 0) {
+      const sipContribYears = Math.min(y, futurePremYears);
+      const sipAtEnd = ap * ((Math.pow(1 + r, sipContribYears) - 1) / r) * (1 + r);
+      const extraYears = y - sipContribYears; // years after SIP stops
+      sip = sipAtEnd * Math.pow(1 + r, extraYears); // compound the corpus
+    }
+    const gross = lump + sip;
+    const gain  = Math.max(0, gross - mfBasis);
+    const tax   = (y === yearsLeft) ? gain * (ltcg/100) : 0;
+    cMF.push(Math.round(gross - tax));
+  }
+
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  chartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Continue Policy',
+          data: cPolicy,
+          borderColor: '#60a5fa',
+          backgroundColor: 'rgba(96,165,250,0.07)',
+          borderWidth: 2.5,
+          pointRadius: 2,
+          fill: false,
+          tension: 0.3,
+        },
+        {
+          label: 'Paid-up Policy',
+          data: cPaidUp,
+          borderColor: '#fbbf24',
+          backgroundColor: 'rgba(251,191,36,0.05)',
+          borderWidth: 2,
+          pointRadius: 2,
+          borderDash: [6, 3],
+          fill: false,
+          tension: 0.3,
+        },
+        {
+          label: 'Mutual Fund (after tax)',
+          data: cMF,
+          borderColor: '#4ade80',
+          backgroundColor: 'rgba(74,222,128,0.07)',
+          borderWidth: 2.5,
+          pointRadius: 2,
+          fill: false,
+          tension: 0.3,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            font: {family: 'IBM Plex Sans', size: 11},
+            color: '#475569',
+            boxWidth: 12, padding: 16,
+            usePointStyle: true,
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(255,255,255,0.97)',
+          borderColor: 'rgba(37,99,235,0.2)',
+          borderWidth: 1,
+          titleColor: '#1e293b',
+          bodyColor: '#475569',
+          padding: 12,
+          callbacks: {
+            label: ctx => `  ${ctx.dataset.label}: ${inr(ctx.raw)}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {color: 'rgba(0,0,0,0.06)'},
+          ticks: {font:{family:'IBM Plex Mono',size:10}, color:'#94a3b8', maxRotation:0}
+        },
+        y: {
+          grid: {color: 'rgba(0,0,0,0.06)'},
+          ticks: {
+            font:{family:'IBM Plex Mono',size:10}, color:'#94a3b8',
+            callback: v => v >= 10000000 ? '₹'+v/10000000+'Cr'
+                         : v >= 100000  ? '₹'+v/100000+'L'
+                         : v >= 1000    ? '₹'+v/1000+'K'
+                         : '₹'+v
+          }
+        }
+      }
+    }
+  });
+}
+
+function resetAll() {
+  document.querySelectorAll('input').forEach(el => {
+    const defaults = {mfReturn:'12', ltcg:'12.5'};
+    el.value = defaults[el.id] || '';
+    el._dirty = false;
+    el._syncing = false;
+  });
+  document.getElementById('premiumFrequency').value = '1';
+  document.getElementById('policyCategory').value   = 'traditional';
+  document.getElementById('policySubtype').value    = 'endowment';
+
+  document.getElementById('installment-label').childNodes[0].textContent = 'Premium Per Installment (Yearly) ';
+
+  const d = new Date(); d.setFullYear(d.getFullYear()-5);
+  document.getElementById('startDate').value   = d.toISOString().split('T')[0];
+  document.getElementById('policyTerm').value  = 20;
+  onStartDateChange();
+
+  document.getElementById('results').style.display    = 'none';
+  document.getElementById('live-strip').style.display = 'none';
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  onCategoryChange();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function printReport() {
+  if (document.getElementById('results').style.display === 'none') {
+    alert('Please analyze a policy first, then export.');
+    return;
+  }
+
+  // Hide everything except results
+  const header = document.querySelector('header');
+  const app = document.querySelector('.app');
+  const hideEls = [];
+
+  // Mark all direct children of .app except #results as no-print
+  Array.from(app.children).forEach(el => {
+    if (el.id !== 'results') {
+      el.classList.add('no-print');
+      hideEls.push(el);
+    }
+  });
+  header.classList.add('no-print');
+
+  window.print();
+
+  // Restore after print
+  setTimeout(() => {
+    hideEls.forEach(el => el.classList.remove('no-print'));
+    header.classList.remove('no-print');
+  }, 500);
+}
+</script>
+</body>
+</html>
