@@ -559,6 +559,10 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 
 /* ── PRINT ── */
 @media print{
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
   *, *::before, *::after {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -567,45 +571,84 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
   body{background:#f8fafc!important;}
   body::before{display:none!important;}
   .no-print{display:none!important;}
-  #results{display:block!important;margin-top:0!important;}
+  #results{display:none!important;} /* Keep template hidden */
+  #results-container > div{display:block!important;margin-top:0!important;}
+  #results-container > div:not(:first-child){break-before:page!important;}
   .card{
     break-inside:avoid;
-    margin-bottom:12px!important;
-    border: 1.5px solid #64748b !important;
+    margin-bottom:16px!important;
+    border: 1.5px solid #cbd5e1 !important;
     background: #ffffff !important;
     box-shadow: none !important;
+    overflow: visible !important; /* Prevent clipping of chart axes */
   }
   .card-body{padding:14px!important;}
   .card-head{
     padding:12px 16px!important;
-    background: #e2e8f0 !important;
-    border-bottom: 1.5px solid #64748b !important;
+    background: #f1f5f9 !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
   }
   thead th {
     background: #cbd5e1 !important;
     color: #0f172a !important;
     border-bottom: 1.5px solid #94a3b8 !important;
   }
+  tbody td {
+    border-bottom: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+    padding: 10px 14px !important;
+  }
+  tbody td:not(:first-child) {
+    text-align: right !important;
+  }
+  .ctable-wrap {
+    overflow: visible !important;
+  }
   .app{padding:0 16px!important;max-width:100%!important;}
   .page-hero{margin-bottom:12px!important;}
-  .metric-row{gap:8px!important;margin-bottom:10px!important;}
+  .metric-row{
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap:10px!important;
+    margin-bottom:12px!important;
+  }
   .mcard{
     padding:12px!important; 
-    border: 1.5px solid #64748b !important;
+    border: 1.5px solid #cbd5e1 !important;
     background: #ffffff !important;
   }
-  .grid-2{gap:10px!important;}
-  .score-section{padding:14px!important;}
-  .rec-box{
-    padding:14px!important;
-    border: 1.5px solid #64748b !important;
+  .grid-2{
+    grid-template-columns: 1fr !important;
+    gap:16px!important;
   }
-  .detail-grid{gap:6px!important;}
-  .detail-item{
+  .wg-bar {
     border: 1px solid #cbd5e1 !important;
     background: #f8fafc !important;
   }
-  .chart-wrap{height:200px!important;}
+  .wg-bar.pos { background-color: rgba(74,222,128,0.08) !important; border-color: #22c55e !important; }
+  .wg-bar.neg { background-color: rgba(248,113,113,0.08) !important; border-color: #ef4444 !important; }
+  .wg-val.pos { color: #16a34a !important; }
+  .wg-val.neg { color: #dc2626 !important; }
+  
+  .score-section{padding:14px!important;}
+  .rec-box{
+    padding:14px!important;
+    border: 1.5px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+  }
+  .rec-box.mfbetter { background-color: rgba(74,222,128,0.08) !important; border-color: #16a34a !important; }
+  .rec-box.paidup { background-color: rgba(251,191,36,0.05) !important; border-color: #d97706 !important; }
+  .rec-box.continue { background-color: rgba(74,222,128,0.05) !important; border-color: #16a34a !important; }
+  
+  .detail-grid{
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap:8px!important;
+  }
+  .detail-item{
+    border: 1px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    padding: 8px 10px !important;
+  }
+  .chart-wrap{height:250px!important;}
 }
 
 /* ── RESPONSIVE ── */
@@ -625,6 +668,32 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 /* ── FADE IN ── */
 .fade-in{animation:fadeIn .5s ease forwards;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ── POLICY TABS ── */
+.policy-tabs {
+  display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;
+}
+.policy-tab {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text2);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.policy-tab.active {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+}
+.policy-tab:hover:not(.active) {
+  background: rgba(255,255,255,0.9);
+}
 </style>
 </head>
 <body>
@@ -694,9 +763,7 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 
   <!-- POLICIES CONTAINER -->
   <div id="policies-container"></div>
-
-  <!-- ADD POLICY BUTTON -->
-  <div style="margin-bottom:25px; text-align:center;" class="no-print">
+  <div style="display:flex; justify-content:center; margin-bottom: 30px;" class="no-print">
     <button class="btn btn-outline" onclick="addNewPolicy()" style="font-weight:700; font-size:14px; padding:10px 24px;">➕ Add Another Policy</button>
   </div>
 
@@ -994,7 +1061,8 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
       Mutual fund returns are not guaranteed.
     </div>
 
-  </div><!-- /results -->
+  </div><!-- /results-template -->
+  <div id="results-container"></div>
 
 </div><!-- /app -->
 
@@ -1002,13 +1070,15 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
      JAVASCRIPT — ALL CALCULATIONS
      ════════════════════════════════════════════ -->
 <script>
+
 'use strict';
 
 // ─── GLOBALS ─────────────────────────────────
-let chartInst = null;
+let chartInsts = {};
 let fvModes = {}; // policyId -> mode ('manual' | 'nav')
 let policyCount = 0;
 let activePolicies = [];
+let currentPolicyId = 1;
 
 // Frequency multipliers → installments per year
 const FREQ_MAP = { '12': 12, '4': 4, '2': 2, '1': 1 };
@@ -1038,6 +1108,8 @@ function addNewPolicy() {
   policyCount++;
   activePolicies.push(policyCount);
   fvModes[policyCount] = 'manual';
+
+
 
   const container = document.getElementById('policies-container');
   const block = document.createElement('div');
@@ -1386,7 +1458,9 @@ function addNewPolicy() {
       liveCalc(currentId);
     });
   }
+  
 }
+
 
 function removePolicy(id) {
   if (activePolicies.length <= 1) {
@@ -1699,231 +1773,143 @@ function liveCalc(id) {
 
 // ─── MAIN ANALYSIS ────────────────────────────
 function analyze() {
+  const container = document.getElementById('results-container');
+  container.innerHTML = '';
+  // Destroy any existing chart instances
+  for(let k in chartInsts) { if(chartInsts[k]) chartInsts[k].destroy(); }
+  chartInsts = {};
+
+  const tmpl = document.getElementById('results');
+  tmpl.style.display = 'none';
+
   const mfReturn = +document.getElementById('mfReturn').value      || 12;
   const inflation= 6;   // hardcoded
   const ltcg     = +document.getElementById('ltcg').value          || 12.5;
   const mfNetRate = mfReturn;
 
-  const policiesData = [];
-  let isAnyUlip = false;
-  let validationError = false;
+  let hasErrors = false;
 
-  activePolicies.forEach(id => {
+  for (const id of activePolicies) {
     const isUlip = document.getElementById(`policyCategory-${id}`).value === 'ulip';
-    const policyName = document.getElementById(`policyName-${id}`).value || `Policy #${id}`;
-    const policyNo = document.getElementById(`policyNo-${id}`).value || '';
-    const sa = +document.getElementById(`sumAssured-${id}`).value || 0;
-    const ap = +document.getElementById(`annualPremium-${id}`).value || 0;
-    const pt = +document.getElementById(`policyTerm-${id}`).value || 0;
-    const pmt = +document.getElementById(`premiumTerm-${id}`).value || 0;
-    const paid = +document.getElementById(`premiumsPaid-${id}`).value || 0;
-    const totalPremPaidEl = document.getElementById(`totalPremiumPaid-${id}`);
-    const tpp = +totalPremPaidEl.value || (ap * paid);
-    const startDate = document.getElementById(`startDate-${id}`).value;
-    const maturityDate = document.getElementById(`maturityDate-${id}`).value;
 
-    if (!sa || !ap || !pt || !pmt || !paid || !startDate || !maturityDate) {
-      validationError = true;
-      return;
-    }
+    // Clone template
+    const clone = tmpl.cloneNode(true);
+    clone.id = `result-${id}`;
+    clone.style.display = 'block';
+    clone.classList.add('fade-in');
+    
+    // Update Chart canvas ID to be unique
+    const chartCanvas = clone.querySelector('#growthChart');
+    if (chartCanvas) chartCanvas.id = `growthChart-${id}`;
 
-    const yearsLeft = pt - paid;
-    const futurePremYears = Math.max(0, pmt - paid);
+    // Append clone to container
+    container.appendChild(clone);
+    
+  const policyName = document.getElementById(`policyName-${id}`).value || `Policy #${id}`;
+  const policyNo = document.getElementById(`policyNo-${id}`).value || '';
+  const sa = +document.getElementById(`sumAssured-${id}`).value || 0;
+  const ap = +document.getElementById(`annualPremium-${id}`).value || 0;
+  const pt = +document.getElementById(`policyTerm-${id}`).value || 0;
+  const pmt = +document.getElementById(`premiumTerm-${id}`).value || 0;
+  const paid = +document.getElementById(`premiumsPaid-${id}`).value || 0;
+  const totalPremPaidEl = document.getElementById(`totalPremiumPaid-${id}`);
+  const tpp = +totalPremPaidEl.value || (ap * paid);
+  const startDate = document.getElementById(`startDate-${id}`).value;
+  const maturityDate = document.getElementById(`maturityDate-${id}`).value;
 
-    let maturityValue = 0;
-    let paidUpMaturity = 0;
-    let paidUpSA = 0;
-    let surrenderValue = 0;
-
-    if (!isUlip) {
-      const revBonusRate = +document.getElementById(`t_revBonusRate-${id}`).value || 0;
-      const termBonusRate= +document.getElementById(`t_termBonusRate-${id}`).value|| 0;
-      const gsvPct       = +document.getElementById(`t_gsvPct-${id}`).value      || 0;
-      const ssvFactor    = +document.getElementById(`t_svFactor-${id}`).value    || 0;
-
-      const revBonusPerYr = (sa / 1000) * revBonusRate;
-      const revBonusTotal = revBonusPerYr * pt;
-      const termBonus = (sa / 1000) * termBonusRate;
-
-      maturityValue = sa + revBonusTotal + termBonus;
-
-      const pvBaseA = (ap * paid) + (revBonusPerYr * paid);
-      paidUpSA = pvBaseA * Math.pow(1.0275, yearsLeft);
-      paidUpMaturity = paidUpSA;
-
-      const gsv = tpp * (gsvPct / 100);
-      const accruedBonus = revBonusPerYr * paid;
-      const partA = accruedBonus * (gsvPct / 100);
-      const eligiblePrem = ap * Math.max(0, paid - 1);
-      const partB = eligiblePrem * ssvFactor;
-      const ssvCalc = partA + partB;
-
-      surrenderValue = Math.max(gsv, ssvCalc);
-    } else {
-      isAnyUlip = true;
-      const fundValue    = +document.getElementById(`u_fundValue-${id}`).value        || 0;
-      const surChargePct = +document.getElementById(`u_surrenderCharge-${id}`).value  || 0;
-      const paidUpFV     = +document.getElementById(`u_paidup-${id}`).value           || fundValue;
-      const mortalityPct = +document.getElementById(`u_mortality-${id}`).value        || 0;
-      const pacPct       = +document.getElementById(`u_pac-${id}`).value              || 0;
-      const fmcPct       = +document.getElementById(`u_fmc-${id}`).value              || 0;
-      const adminPct     = +document.getElementById(`u_pac2-${id}`).value             || 0;
-
-      const totalChargeDrag = mortalityPct + fmcPct + adminPct;
-      const effectivePremAlloc = (1 - pacPct / 100);
-      const ulipNetRate = Math.max(0, mfReturn - totalChargeDrag);
-
-      surrenderValue = fundValue * (1 - surChargePct / 100);
-      maturityValue = lumpFV(fundValue, ulipNetRate, yearsLeft)
-                    + sipFV(ap * effectivePremAlloc, ulipNetRate, futurePremYears);
-
-      paidUpSA = paidUpFV;
-      paidUpMaturity = lumpFV(paidUpFV, ulipNetRate, yearsLeft);
-    }
-
-    const mfLump    = lumpFV(surrenderValue, mfNetRate, yearsLeft);
-    const mfSIPatEnd = sipFV(ap, mfNetRate, futurePremYears);
-    const sipExtraYears = yearsLeft - futurePremYears;
-    const mfSIP     = sipExtraYears > 0 ? lumpFV(mfSIPatEnd, mfNetRate, sipExtraYears) : mfSIPatEnd;
-    const mfGross   = mfLump + mfSIP;
-    const mfCostBasis = surrenderValue + (ap * futurePremYears);
-    const mfGain      = Math.max(0, mfGross - mfCostBasis);
-    const mfTax       = mfGain * (ltcg / 100);
-    const mfFinal     = mfGross - mfTax;
-
-    let pContinueIRR = NaN;
-    let pPaidUpIRR = NaN;
-    let pSurrenderIRR = NaN;
-
-    {
-      const cfs = [], ts = [];
-      for (let y = 0; y < pmt; y++) { cfs.push(-ap); ts.push(y); }
-      cfs.push(maturityValue); ts.push(pt);
-      pContinueIRR = xirr(cfs, ts) * 100;
-    }
-    {
-      const cfs = [], ts = [];
-      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
-      cfs.push(paidUpMaturity); ts.push(pt);
-      pPaidUpIRR = xirr(cfs, ts) * 100;
-    }
-    {
-      const cfs = [], ts = [];
-      for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
-      cfs.push(surrenderValue); ts.push(paid);
-      pSurrenderIRR = xirr(cfs, ts) * 100;
-    }
-
-    policiesData.push({
-      id,
-      policyName,
-      policyNo,
-      policyCategory: isUlip ? 'ulip' : 'traditional',
-      isUlip,
-      sa,
-      ap,
-      pt,
-      pmt,
-      paid,
-      tpp,
-      startDate,
-      maturityDate,
-      yearsLeft,
-      futurePremYears,
-      maturityValue,
-      paidUpMaturity,
-      paidUpSA,
-      surrenderValue,
-      mfNetRate,
-      mfGross,
-      mfCostBasis,
-      mfFinal,
-      mfTax,
-      continueIRR: pContinueIRR,
-      paidUpIRR: pPaidUpIRR,
-      surrenderIRR: pSurrenderIRR,
-      pacPct: isUlip ? +document.getElementById(`u_pac-${id}`).value || 0 : 0,
-      fmcPct: isUlip ? +document.getElementById(`u_fmc-${id}`).value || 0 : 0,
-      mortalityPct: isUlip ? +document.getElementById(`u_mortality-${id}`).value || 0 : 0,
-      adminPct: isUlip ? +document.getElementById(`u_pac2-${id}`).value || 0 : 0
-    });
-  });
-
-  if (validationError) {
-    alert('⚠️ Please fill in all required policy details for all policies:\nSum Assured, Annual Premium, Policy Term, Premium Paying Term, Years Paid, Start Date, and Maturity Date.');
-    return;
+  if (!sa || !ap || !pt || !pmt || !paid || !startDate || !maturityDate) {
+    alert(`⚠️ Please fill in all required policy details for Policy #${id}:\nSum Assured, Annual Premium, Policy Term, Premium Paying Term, Years Paid, Start Date, and Maturity Date.`);
+    hasErrors = true; continue;
   }
 
-  const today = new Date();
-  const startDates = policiesData.map(p => new Date(p.startDate));
-  const minStartDate = new Date(Math.min(...startDates));
+  const yearsLeft = pt - paid;
+  const futurePremYears = Math.max(0, pmt - paid);
 
-  const addCF = (map, date, amount) => {
-    const key = date.toISOString().split('T')[0];
-    map[key] = (map[key] || 0) + amount;
-  };
+  let maturityValue = 0;
+  let paidUpMaturity = 0;
+  let paidUpSA = 0;
+  let surrenderValue = 0;
 
-  const cfContinue = {};
-  const cfPaidUp = {};
-  const cfSurrender = {};
+  if (!isUlip) {
+    const revBonusRate = +document.getElementById(`t_revBonusRate-${id}`).value || 0;
+    const termBonusRate= +document.getElementById(`t_termBonusRate-${id}`).value|| 0;
+    const gsvPct       = +document.getElementById(`t_gsvPct-${id}`).value      || 0;
+    const ssvFactor    = +document.getElementById(`t_svFactor-${id}`).value    || 0;
 
-  policiesData.forEach(p => {
-    const pStart = new Date(p.startDate);
-    const pMat = new Date(p.maturityDate);
+    const revBonusPerYr = (sa / 1000) * revBonusRate;
+    const revBonusTotal = revBonusPerYr * pt;
+    const termBonus = (sa / 1000) * termBonusRate;
 
-    for (let k = 0; k < p.pmt; k++) {
-      const d = new Date(pStart);
-      d.setFullYear(pStart.getFullYear() + k);
-      addCF(cfContinue, d, -p.ap);
-    }
-    addCF(cfContinue, pMat, p.maturityValue);
+    maturityValue = sa + revBonusTotal + termBonus;
 
-    for (let k = 0; k < p.paid; k++) {
-      const d = new Date(pStart);
-      d.setFullYear(pStart.getFullYear() + k);
-      addCF(cfPaidUp, d, -p.ap);
-    }
-    addCF(cfPaidUp, pMat, p.paidUpMaturity);
+    const pvBaseA = (ap * paid) + (revBonusPerYr * paid);
+    paidUpSA = pvBaseA * Math.pow(1.0275, yearsLeft);
+    paidUpMaturity = paidUpSA;
 
-    for (let k = 0; k < p.paid; k++) {
-      const d = new Date(pStart);
-      d.setFullYear(pStart.getFullYear() + k);
-      addCF(cfSurrender, d, -p.ap);
-    }
-    addCF(cfSurrender, today, p.surrenderValue);
-  });
+    const gsv = tpp * (gsvPct / 100);
+    const accruedBonus = revBonusPerYr * paid;
+    const partA = accruedBonus * (gsvPct / 100);
+    const eligiblePrem = ap * Math.max(0, paid - 1);
+    const partB = eligiblePrem * ssvFactor;
+    const ssvCalc = partA + partB;
 
-  const getConsolidatedXIRR = cfMap => {
-    const sortedEntries = Object.keys(cfMap)
-      .map(k => ({ date: new Date(k), amount: cfMap[k] }))
-      .sort((a, b) => a.date - b.date);
-    if (sortedEntries.length === 0) return NaN;
-    const firstDate = sortedEntries[0].date;
+    surrenderValue = Math.max(gsv, ssvCalc);
+  } else {
+    const fundValue    = +document.getElementById(`u_fundValue-${id}`).value        || 0;
+    const surChargePct = +document.getElementById(`u_surrenderCharge-${id}`).value  || 0;
+    const paidUpFV     = +document.getElementById(`u_paidup-${id}`).value           || fundValue;
+    const mortalityPct = +document.getElementById(`u_mortality-${id}`).value        || 0;
+    const pacPct       = +document.getElementById(`u_pac-${id}`).value              || 0;
+    const fmcPct       = +document.getElementById(`u_fmc-${id}`).value              || 0;
+    const adminPct     = +document.getElementById(`u_pac2-${id}`).value             || 0;
+
+    const totalChargeDrag = mortalityPct + fmcPct + adminPct;
+    const effectivePremAlloc = (1 - pacPct / 100);
+    const ulipNetRate = Math.max(0, mfReturn - totalChargeDrag);
+
+    surrenderValue = fundValue * (1 - surChargePct / 100);
+    maturityValue = lumpFV(fundValue, ulipNetRate, yearsLeft)
+                  + sipFV(ap * effectivePremAlloc, ulipNetRate, futurePremYears);
+
+    paidUpSA = paidUpFV;
+    paidUpMaturity = lumpFV(paidUpFV, ulipNetRate, yearsLeft);
+  }
+
+  const mfLump    = lumpFV(surrenderValue, mfNetRate, yearsLeft);
+  const mfSIPatEnd = sipFV(ap, mfNetRate, futurePremYears);
+  const sipExtraYears = yearsLeft - futurePremYears;
+  const mfSIP     = sipExtraYears > 0 ? lumpFV(mfSIPatEnd, mfNetRate, sipExtraYears) : mfSIPatEnd;
+  const mfGross   = mfLump + mfSIP;
+  const mfCostBasis = surrenderValue + (ap * futurePremYears);
+  const mfGain      = Math.max(0, mfGross - mfCostBasis);
+  const mfTax       = mfGain * (ltcg / 100);
+  const mfFinal     = mfGross - mfTax;
+
+  let continueIRR = NaN;
+  let paidUpIRR = NaN;
+  let surrenderIRR = NaN;
+
+  {
     const cfs = [], ts = [];
-    sortedEntries.forEach(e => {
-      cfs.push(e.amount);
-      ts.push((e.date - firstDate) / (365.25 * 24 * 3600 * 1000));
-    });
-    return xirr(cfs, ts) * 100;
-  };
+    for (let y = 0; y < pmt; y++) { cfs.push(-ap); ts.push(y); }
+    cfs.push(maturityValue); ts.push(pt);
+    continueIRR = xirr(cfs, ts) * 100;
+  }
+  {
+    const cfs = [], ts = [];
+    for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+    cfs.push(paidUpMaturity); ts.push(pt);
+    paidUpIRR = xirr(cfs, ts) * 100;
+  }
+  {
+    const cfs = [], ts = [];
+    for (let y = 0; y < paid; y++) { cfs.push(-ap); ts.push(y); }
+    cfs.push(surrenderValue); ts.push(paid);
+    surrenderIRR = xirr(cfs, ts) * 100;
+  }
 
-  const continueIRR = getConsolidatedXIRR(cfContinue);
-  const paidUpIRR = getConsolidatedXIRR(cfPaidUp);
-  const surrenderIRR = getConsolidatedXIRR(cfSurrender);
-
-  const totalMaturityValue = policiesData.reduce((sum, p) => sum + p.maturityValue, 0);
-  const totalPaidUpMaturity = policiesData.reduce((sum, p) => sum + p.paidUpMaturity, 0);
-  const totalSurrenderValue = policiesData.reduce((sum, p) => sum + p.surrenderValue, 0);
-  const totalMFGross = policiesData.reduce((sum, p) => sum + p.mfGross, 0);
-  const totalMFCostBasis = policiesData.reduce((sum, p) => sum + p.mfCostBasis, 0);
-  
-  const totalMFGain = Math.max(0, totalMFGross - totalMFCostBasis);
-  const totalMFTax = totalMFGain * (ltcg / 100);
-  const totalMFFinal = totalMFGross - totalMFTax;
-
-  const wealthGain = totalMFFinal - totalMaturityValue;
-
-  const maxYearsLeft = Math.max(...policiesData.map(p => p.yearsLeft), 1);
+  const wealthGain = mfFinal - maturityValue;
+  const maxYearsLeft = Math.max(yearsLeft, 1);
   const labels = [];
   const cPolicy = [];
   const cPaidUp = [];
@@ -1938,182 +1924,170 @@ function analyze() {
     let totalPuVal = 0;
     let totalMfVal = 0;
 
-    policiesData.forEach(p => {
-      if (y <= p.yearsLeft) {
-        const val = p.surrenderValue + (p.maturityValue - p.surrenderValue) * (y / Math.max(p.yearsLeft, 1));
-        totalContVal += val;
-      } else {
-        const val = p.maturityValue * Math.pow(1 + r, y - p.yearsLeft);
-        totalContVal += val;
+    if (y <= yearsLeft) {
+      totalContVal = surrenderValue + (maturityValue - surrenderValue) * (y / Math.max(yearsLeft, 1));
+      totalPuVal = surrenderValue + (paidUpMaturity - surrenderValue) * (y / Math.max(yearsLeft, 1));
+      
+      const lump = surrenderValue * Math.pow(1 + r, y);
+      let sip = 0;
+      if (y > 0 && futurePremYears > 0) {
+        const sipContribYears = Math.min(y, futurePremYears);
+        const sipAtEnd = ap * ((Math.pow(1 + r, sipContribYears) - 1) / r) * (1 + r);
+        const extraYears = y - sipContribYears;
+        sip = sipAtEnd * Math.pow(1 + r, extraYears);
       }
-
-      if (y <= p.yearsLeft) {
-        const val = p.surrenderValue + (p.paidUpMaturity - p.surrenderValue) * (y / Math.max(p.yearsLeft, 1));
-        totalPuVal += val;
+      const gross = lump + sip;
+      if (y === yearsLeft) {
+        const gain = Math.max(0, gross - mfCostBasis);
+        const tax = gain * (ltcg / 100);
+        totalMfVal = gross - tax;
       } else {
-        const val = p.paidUpMaturity * Math.pow(1 + r, y - p.yearsLeft);
-        totalPuVal += val;
+        totalMfVal = gross;
       }
-
-      if (y <= p.yearsLeft) {
-        const lump = p.surrenderValue * Math.pow(1 + r, y);
-        let sip = 0;
-        if (y > 0 && p.futurePremYears > 0) {
-          const sipContribYears = Math.min(y, p.futurePremYears);
-          const sipAtEnd = p.ap * ((Math.pow(1 + r, sipContribYears) - 1) / r) * (1 + r);
-          const extraYears = y - sipContribYears;
-          sip = sipAtEnd * Math.pow(1 + r, extraYears);
-        }
-        const gross = lump + sip;
-        if (y === p.yearsLeft) {
-          const gain = Math.max(0, gross - p.mfCostBasis);
-          const tax = gain * (ltcg / 100);
-          totalMfVal += (gross - tax);
-        } else {
-          totalMfVal += gross;
-        }
-      } else {
-        const val = p.mfFinal * Math.pow(1 + r, y - p.yearsLeft);
-        totalMfVal += val;
-      }
-    });
+    } else {
+      totalContVal = maturityValue * Math.pow(1 + r, y - yearsLeft);
+      totalPuVal = paidUpMaturity * Math.pow(1 + r, y - yearsLeft);
+      totalMfVal = mfFinal * Math.pow(1 + r, y - yearsLeft);
+    }
 
     cPolicy.push(Math.round(totalContVal));
     cPaidUp.push(Math.round(totalPuVal));
     cMF.push(Math.round(totalMfVal));
   }
 
-  const clientNameVal = document.getElementById('clientName').value.trim() || 'Client';
-  const clientPanVal = document.getElementById('clientPan').value.trim();
-  const groupLeaderVal = document.getElementById('groupLeader').value.trim();
+  // Client info inputs are outside the template — use document.getElementById
+  const clientNameVal = (document.getElementById('clientName').value || '').trim() || 'Client';
+  const clientPanVal = (document.getElementById('clientPan').value || '').trim();
+  const groupLeaderVal = (document.getElementById('groupLeader').value || '').trim();
 
-  document.getElementById('r-client-name').textContent = clientNameVal;
-  document.getElementById('r-client-meta').innerHTML = `
+  clone.querySelector('#r-client-name').textContent = clientNameVal;
+  clone.querySelector('#r-client-meta').innerHTML = `
     ${clientPanVal ? `<div><strong>PAN No:</strong> ${clientPanVal}</div>` : ''}
     ${groupLeaderVal ? `<div><strong>Group Leader:</strong> ${groupLeaderVal}</div>` : ''}
   `;
 
-  const policyNamesStr = policiesData.map((p, idx) => `${p.policyName || `Policy #${idx+1}`}`).join(', ');
-  document.getElementById('r-policy-name').textContent = policyNamesStr;
-  document.getElementById('r-policy-label').textContent = 'Consolidated Portfolio Review';
+  clone.querySelector('#r-policy-name').textContent = policyName + (policyNo ? ` (${policyNo})` : '');
+  clone.querySelector('#r-policy-label').textContent = `Policy #${id} — Individual Review`;
 
   const scenarios = [
-    { name: 'Continue Policy',  value: totalMaturityValue,  type: 'continue', emoji: '📜', color: '#3b82f6' },
-    { name: 'Go Paid-up',       value: totalPaidUpMaturity,  type: 'paidup',   emoji: '🔒', color: '#d97706' },
-    { name: 'Mutual Fund is Better', value: totalMFFinal,    type: 'mf',       emoji: '📈', color: '#16a34a' },
+    { name: 'Continue Policy',  value: maturityValue,  type: 'continue', emoji: '📜', color: '#3b82f6' },
+    { name: 'Go Paid-up',       value: paidUpMaturity,  type: 'paidup',   emoji: '🔒', color: '#d97706' },
+    { name: 'Mutual Fund is Better', value: mfFinal,    type: 'mf',       emoji: '📈', color: '#16a34a' },
   ];
   scenarios.sort((a, b) => b.value - a.value);
   const winner = scenarios[0];
   const runnerUp = scenarios[1];
   const diff = winner.value - runnerUp.value;
 
-  const scoreArc = document.getElementById('score-arc');
+  const scoreArc = clone.querySelector('#score-arc');
   scoreArc.style.strokeDashoffset = 0; 
   scoreArc.style.stroke = winner.color;
-  document.getElementById('score-num').textContent = '₹' + (winner.value / 100000).toFixed(2);
-  document.getElementById('score-num').style.color = winner.color;
+  clone.querySelector('#score-num').textContent = '₹' + (winner.value / 100000).toFixed(2);
+  clone.querySelector('#score-num').style.color = winner.color;
 
-  document.getElementById('score-verdict').textContent = winner.name;
-  document.getElementById('score-desc').textContent =
-    `${winner.name} gives the highest consolidated maturity value · ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)})`;
+  clone.querySelector('#score-verdict').textContent = winner.name;
+  clone.querySelector('#score-desc').textContent =
+    `${winner.name} gives the highest maturity value · ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)})`;
 
   const tags = [
-    {t: `Continue: ${inr(totalMaturityValue)}`, c: winner.type === 'continue' ? 'stag-green' : 'stag-gold'},
-    {t: `Paid-up: ${inr(totalPaidUpMaturity)}`, c: winner.type === 'paidup' ? 'stag-green' : 'stag-gold'},
-    {t: `MF: ${inr(totalMFFinal)}`, c: winner.type === 'mf' ? 'stag-green' : 'stag-gold'},
+    {t: `Continue: ${inr(maturityValue)}`, c: winner.type === 'continue' ? 'stag-green' : 'stag-gold'},
+    {t: `Paid-up: ${inr(paidUpMaturity)}`, c: winner.type === 'paidup' ? 'stag-green' : 'stag-gold'},
+    {t: `MF: ${inr(mfFinal)}`, c: winner.type === 'mf' ? 'stag-green' : 'stag-gold'},
   ];
-  document.getElementById('score-tags').innerHTML = tags
+  clone.querySelector('#score-tags').innerHTML = tags
     .map(t => `<span class="stag ${t.c}">${t.t}</span>`).join('');
 
-  document.getElementById('mc-cont-irr').textContent = pct(continueIRR);
-  document.getElementById('mc-pu-irr').textContent   = pct(paidUpIRR);
-  document.getElementById('mc-sur-irr').textContent  = pct(surrenderIRR);
-  document.getElementById('mc-mf-ret').textContent   = pct(mfNetRate);
+  clone.querySelector('#mc-cont-irr').textContent = pct(continueIRR);
+  clone.querySelector('#mc-pu-irr').textContent   = pct(paidUpIRR);
+  clone.querySelector('#mc-sur-irr').textContent  = pct(surrenderIRR);
+  clone.querySelector('#mc-mf-ret').textContent   = pct(mfNetRate);
 
-  colorIrrCard('mc-cont-irr', continueIRR);
-  colorIrrCard('mc-pu-irr',   paidUpIRR);
-  colorIrrCard('mc-sur-irr',  surrenderIRR);
+  colorIrrCard(clone, 'mc-cont-irr', continueIRR);
+  colorIrrCard(clone, 'mc-pu-irr',   paidUpIRR);
+  colorIrrCard(clone, 'mc-sur-irr',  surrenderIRR);
 
-  document.getElementById('td-cont-val').textContent  = inr(totalMaturityValue);
-  document.getElementById('td-cont-irr').innerHTML    = irrPill(continueIRR);
+  clone.querySelector('#td-cont-val').textContent  = inr(maturityValue);
+  clone.querySelector('#td-cont-irr').innerHTML    = irrPill(continueIRR);
 
-  document.getElementById('td-pu-val').textContent    = inr(totalPaidUpMaturity);
-  document.getElementById('td-pu-irr').innerHTML      = irrPill(paidUpIRR);
+  clone.querySelector('#td-pu-val').textContent    = inr(paidUpMaturity);
+  clone.querySelector('#td-pu-irr').innerHTML      = irrPill(paidUpIRR);
 
-  document.getElementById('td-sur-val').textContent   = inr(totalSurrenderValue);
-  document.getElementById('td-sur-irr').innerHTML     = irrPill(surrenderIRR);
+  clone.querySelector('#td-sur-val').textContent   = inr(surrenderValue);
+  clone.querySelector('#td-sur-irr').innerHTML     = irrPill(surrenderIRR);
 
-  document.getElementById('td-mf-val').textContent    = inr(totalMFFinal);
-  document.getElementById('td-mf-irr').innerHTML      = `<span class="irr-pill pill-green">${pct(mfNetRate)}</span>`;
+  clone.querySelector('#td-mf-val').textContent    = inr(mfFinal);
+  clone.querySelector('#td-mf-irr').innerHTML      = `<span class="irr-pill pill-green">${pct(mfNetRate)}</span>`;
 
   const rows = ['tr-continue','tr-paidup','tr-surrender','tr-mf'];
-  const vals  = [totalMaturityValue, totalPaidUpMaturity, totalSurrenderValue, totalMFFinal];
-  rows.forEach((id,i) => {
-    document.getElementById(id).className = vals[i] === Math.max(...vals) ? 'tr-best' : '';
+  const vals  = [maturityValue, paidUpMaturity, surrenderValue, mfFinal];
+  const maxVal = Math.max(...vals);
+  rows.forEach((rid,i) => {
+    const el = clone.querySelector(`#${rid}`);
+    if (el) el.className = vals[i] === maxVal ? 'tr-best' : '';
   });
 
-  const wgBar = document.getElementById('wg-bar');
+  const wgBar = clone.querySelector('#wg-bar');
   wgBar.className = 'wg-bar ' + (wealthGain >= 0 ? 'pos' : 'neg');
-  document.getElementById('wg-val').className = 'wg-val ' + (wealthGain >= 0 ? 'pos' : 'neg');
-  document.getElementById('wg-val').textContent = (wealthGain >= 0 ? '+' : '') + inr(wealthGain);
-  document.getElementById('wg-label').textContent = wealthGain >= 0
+  clone.querySelector('#wg-val').className = 'wg-val ' + (wealthGain >= 0 ? 'pos' : 'neg');
+  clone.querySelector('#wg-val').textContent = (wealthGain >= 0 ? '+' : '') + inr(wealthGain);
+  clone.querySelector('#wg-label').textContent = wealthGain >= 0
     ? 'MF generates more wealth than continuing policy'
     : 'Policy generates more wealth than MF in this case';
-  document.getElementById('wg-sub').textContent =
-    `${inr(totalMFFinal)} (MF) vs ${inr(totalMaturityValue)} (Policy) at max term of ${maxYearsLeft} years`;
+  clone.querySelector('#wg-sub').textContent =
+    `${inr(mfFinal)} (MF) vs ${inr(maturityValue)} (Policy) at term of ${maxYearsLeft} years`;
 
   let recType, recEmoji, recTitleText, recBodyText, actionSteps;
   if (winner.type === 'mf') {
     recType = 'mfbetter';
     recEmoji = '📈';
     recTitleText = 'Mutual Fund is the Recommended Path';
-    recBodyText = `Consolidated Mutual Fund strategy gives the highest wealth accumulation of ${inr(totalMFFinal)}, which is ${inr(diff)} more than the next best option (${runnerUp.name}: ${inr(runnerUp.value)}). Surrendering your policies and migrating to diversified mutual funds is recommended.`;
+    recBodyText = `Mutual Fund strategy gives the highest wealth accumulation of ${inr(mfFinal)}, which is ${inr(diff)} more than the next best option (${runnerUp.name}: ${inr(runnerUp.value)}). Surrendering your policy and migrating to diversified mutual funds is recommended.`;
     actionSteps = [
-      `🏦 Procure exact surrender value quotes for all policies from insurers`,
-      `📊 Reinvest total surrender values (${inr(totalSurrenderValue)}) as a lump sum in mutual funds`,
-      `📈 Channel saved premiums of ${inr(policiesData.reduce((sum, p) => sum + p.ap, 0))} per year into equity SIPs`,
+      `🏦 Procure exact surrender value quote for this policy from insurer`,
+      `📊 Reinvest surrender value (${inr(surrenderValue)}) as a lump sum in mutual funds`,
+      `📈 Channel saved premium of ${inr(ap)} per year into equity SIPs`,
       `🛡️ Purchase a low-cost pure term insurance plan to replace life cover`
     ];
   } else if (winner.type === 'paidup') {
     recType = 'paidup';
     recEmoji = '⏸️';
     recTitleText = 'Go Paid-up — Highly Recommended';
-    recBodyText = `Making policies paid-up gives the highest maturity value of ${inr(totalPaidUpMaturity)}, which is ${inr(diff)} more than the next best option (${runnerUp.name}: ${inr(runnerUp.value)}). This halts ongoing premium outflows while letting the accrued corpus compound.`;
+    recBodyText = `Making the policy paid-up gives the highest maturity value of ${inr(paidUpMaturity)}, which is ${inr(diff)} more than the next best option (${runnerUp.name}: ${inr(runnerUp.value)}). This halts ongoing premium outflows while letting the accrued corpus compound.`;
     actionSteps = [
-      `📝 Submit Paid-up applications for the relevant policies to the insurers`,
-      `📈 Redirect saved premiums of ${inr(policiesData.reduce((sum, p) => sum + p.ap, 0))} per year into equity mutual fund SIPs`,
+      `📝 Submit Paid-up application for this policy to the insurer`,
+      `📈 Redirect saved premium of ${inr(ap)} per year into equity mutual fund SIPs`,
       `🛡️ Verify if existing life cover from other sources is sufficient`
     ];
   } else {
     recType = 'continue';
     recEmoji = '✅';
-    recTitleText = 'Continue Policy Portfolio';
-    recBodyText = `Continuing your existing policies gives the highest consolidated maturity value of ${inr(totalMaturityValue)}, which is ${inr(diff)} more than the next best option (${runnerUp.name}: ${inr(runnerUp.value)}). Your portfolio's return is solid relative to alternative options.`;
+    recTitleText = 'Continue Policy';
+    recBodyText = `Continuing your existing policy gives the highest maturity value of ${inr(maturityValue)}, which is ${inr(diff)} more than the next best option (${runnerUp.name}: ${inr(runnerUp.value)}). Your policy's return is solid relative to alternative options.`;
     actionSteps = [
-      `📅 Set reminders for all premium payment schedules`,
+      `📅 Set reminders for premium payment schedule`,
       `📄 Ensure all nomination details are updated and correct`,
       `📈 Keep mutual fund investments running separately for wealth growth`
     ];
   }
 
-  const recBox = document.getElementById('rec-box');
+  const recBox = clone.querySelector('#rec-box');
   recBox.className = 'rec-box ' + recType;
-  document.getElementById('rec-emoji').textContent = recEmoji;
-  document.getElementById('rec-title').className = 'rec-title ' + recType;
-  document.getElementById('rec-title').textContent = recTitleText;
-  document.getElementById('rec-body').textContent = recBodyText;
-  document.getElementById('action-steps').innerHTML = actionSteps
+  clone.querySelector('#rec-emoji').textContent = recEmoji;
+  clone.querySelector('#rec-title').className = 'rec-title ' + recType;
+  clone.querySelector('#rec-title').textContent = recTitleText;
+  clone.querySelector('#rec-body').textContent = recBodyText;
+  clone.querySelector('#action-steps').innerHTML = actionSteps
     .map(s => `<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);">${s}</div>`)
     .join('');
 
-  document.getElementById('detail-grid').innerHTML = [
-    {l:'Consolidated Maturity',     v: inr(totalMaturityValue)},
-    {l:'Consolidated Paid-up SA',   v: inr(policiesData.reduce((sum, p) => sum + p.paidUpSA, 0))},
-    {l:'Consolidated Surrender',    v: inr(totalSurrenderValue)},
-    {l:'Consolidated MF Final',     v: inr(totalMFFinal)},
-    {l:'Total MF Tax (LTCG)',       v: inr(totalMFTax)},
-    {l:'Max Years to Maturity',     v: maxYearsLeft + ' yrs'},
-    {l:'Weighted Completion %',     v: pct( (policiesData.reduce((sum, p) => sum + p.paid, 0) / policiesData.reduce((sum, p) => sum + p.pt, 0)) * 100, 0)},
+  clone.querySelector('#detail-grid').innerHTML = [
+    {l:'Maturity Value',     v: inr(maturityValue)},
+    {l:'Paid-up SA',         v: inr(paidUpSA)},
+    {l:'Surrender Value',    v: inr(surrenderValue)},
+    {l:'MF Final Value',     v: inr(mfFinal)},
+    {l:'MF Tax (LTCG)',      v: inr(mfTax)},
+    {l:'Years to Maturity',  v: maxYearsLeft + ' yrs'},
+    {l:'Completion %',       v: pct( (paid / pt) * 100, 0)},
   ].map(d => `
     <div class="detail-item">
       <div class="di-label">${d.l}</div>
@@ -2121,182 +2095,75 @@ function analyze() {
     </div>
   `).join('');
 
-  const totalPaidYears = policiesData.reduce((sum, p) => sum + p.paid, 0);
-  const totalTerms = policiesData.reduce((sum, p) => sum + p.pt, 0);
-  const avgPaid = totalPaidYears / policiesData.length;
-  const avgTerm = totalTerms / policiesData.length;
-  const pctDone = Math.min(100, Math.round((avgPaid / avgTerm) * 100));
+  const pctDone = Math.min(100, Math.round((paid / pt) * 100));
+  clone.querySelector('#bel-fill').style.width = pctDone + '%';
+  clone.querySelector('#bel-marker').style.left = pctDone + '%';
+  clone.querySelector('#bel-year').textContent = `Yr ${paid}`;
+  clone.querySelector('#bel-mid').textContent  = `Yr ${Math.round(pt / 2)}`;
 
-  document.getElementById('bel-fill').style.width = pctDone + '%';
-  document.getElementById('bel-marker').style.left = pctDone + '%';
-  document.getElementById('bel-year').textContent = `Avg Yr ${Math.round(avgPaid)}`;
-  document.getElementById('bel-mid').textContent  = `Avg Yr ${Math.round(avgTerm / 2)}`;
+  if (isUlip) {
+    clone.querySelector('#ulip-charges-card').style.display = '';
+    const pacPct       = +document.getElementById(`u_pac-${id}`).value              || 0;
+    const fmcPct       = +document.getElementById(`u_fmc-${id}`).value              || 0;
+    const mortalityPct = +document.getElementById(`u_mortality-${id}`).value        || 0;
+    const adminPct     = +document.getElementById(`u_pac2-${id}`).value             || 0;
 
-  if (isAnyUlip) {
-    document.getElementById('ulip-charges-card').style.display = '';
-    const ulipPolicies = policiesData.filter(p => p.isUlip);
-    const avgDrag = ulipPolicies.reduce((sum, p) => sum + p.mortalityPct + p.fmcPct + p.adminPct + p.pacPct * 0.1, 0) / ulipPolicies.length;
+    const drag = mortalityPct + fmcPct + adminPct + pacPct * 0.1;
     
-    document.getElementById('ulip-total-drag').textContent = pct(avgDrag, 2);
-    document.getElementById('ulip-net-ret-text').textContent = pct(mfNetRate - avgDrag);
-    document.getElementById('ulip-gross-ret').textContent = pct(mfReturn);
+    clone.querySelector('#ulip-total-drag').textContent = pct(drag, 2);
+    clone.querySelector('#ulip-net-ret-text').textContent = pct(mfNetRate - drag);
+    clone.querySelector('#ulip-gross-ret').textContent = pct(mfReturn);
 
-    let chargesHTML = '';
-    policiesData.forEach((p, idx) => {
-      if (p.isUlip) {
-        chargesHTML += `<div style="font-weight:600; margin-top:10px; margin-bottom:6px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:4px;">Policy #${idx+1}: ${p.policyName || 'ULIP'}</div>`;
-        const charges = [
-          {name:'Premium Allocation', val: p.pacPct},
-          {name:'Fund Management (FMC)', val: p.fmcPct},
-          {name:'Mortality Charges', val: p.mortalityPct},
-          {name:'Policy Admin Charges', val: p.adminPct},
-        ];
-        const maxC = Math.max(...charges.map(c => c.val), 0.01);
-        chargesHTML += charges.map(c => `
-          <div class="charge-row">
-            <span class="charge-name">${c.name}</span>
-            <div class="charge-bar-bg"><div class="charge-bar-fill" style="width:${Math.min(100,(c.val/maxC)*100)}%"></div></div>
-            <span class="charge-pct">${pct(c.val)}</span>
-          </div>
-        `).join('');
-      }
-    });
-    document.getElementById('charge-bars').innerHTML = chargesHTML;
+    const charges = [
+      {name:'Premium Allocation', val: pacPct},
+      {name:'Fund Management (FMC)', val: fmcPct},
+      {name:'Mortality Charges', val: mortalityPct},
+      {name:'Policy Admin Charges', val: adminPct},
+    ];
+    const maxC = Math.max(...charges.map(c => c.val), 0.01);
+    const chargesHTML = `<div style="font-weight:600; margin-top:10px; margin-bottom:6px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:4px;">${policyName}</div>` + charges.map(c => `
+      <div class="charge-row">
+        <span class="charge-name">${c.name}</span>
+        <div class="charge-bar-bg"><div class="charge-bar-fill" style="width:${Math.min(100,(c.val/maxC)*100)}%"></div></div>
+        <span class="charge-pct">${pct(c.val)}</span>
+      </div>
+    `).join('');
+    clone.querySelector('#charge-bars').innerHTML = chargesHTML;
   } else {
-    document.getElementById('ulip-charges-card').style.display = 'none';
+    clone.querySelector('#ulip-charges-card').style.display = 'none';
   }
 
-  const indBreakdownContainer = document.getElementById('individual-breakdown-container');
-  let indHTML = '';
-  policiesData.forEach((p, idx) => {
-    const pTypeVal = p.isUlip ? 'ULIP' : document.getElementById(`policySubtype-${p.id}`).selectedOptions[0].text;
-    const pName = p.policyName || `Policy #${idx+1}`;
-    const pNoStr = p.policyNo ? ` (No. ${p.policyNo})` : '';
-    
-    const irrCont = p.continueIRR;
-    const irrPu = p.paidUpIRR;
-    const irrSur = p.surrenderIRR;
-    const irrMf = p.mfNetRate;
-    
-    const indWealthGain = p.mfFinal - p.maturityValue;
-    
-    const indScenarios = [
-      { name: 'Continue Policy', value: p.maturityValue, type: 'continue', color: '#3b82f6' },
-      { name: 'Go Paid-up', value: p.paidUpMaturity, type: 'paidup', color: '#d97706' },
-      { name: 'Mutual Fund', value: p.mfFinal, type: 'mf', color: '#16a34a' }
-    ];
-    indScenarios.sort((a, b) => b.value - a.value);
-    const indWinner = indScenarios[0];
+  buildChart(`growthChart-${id}`, id, labels, cPolicy, cPaidUp, cMF);
 
-    indHTML += `
-      <div class="card" style="margin-bottom:18px;">
-        <div class="card-head" style="background:rgba(37,99,235,0.04);">
-          <div class="cicon ci-blue">📋</div>
-          <div>
-            <div class="ctitle">Policy #${idx+1} Review: ${pName}${pNoStr}</div>
-            <div class="csub">${pTypeVal} · ${p.pt} Years Term · Started ${p.startDate}</div>
-          </div>
-          <div style="margin-left:auto;">
-            <span class="best-badge" style="color:${indWinner.color}; background:transparent; border-color:${indWinner.color};">Best: ${indWinner.name}</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="grid-2">
-            <div class="ctable-wrap" style="border:1px solid var(--border); border-radius:var(--rsm); overflow:hidden;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Scenario</th>
-                    <th>Maturity Value</th>
-                    <th>IRR</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="${indWinner.type === 'continue' ? 'tr-best' : ''}">
-                    <td><span class="scenario-name"><span class="sdot" style="background:#60a5fa"></span>Continue Policy</span></td>
-                    <td>${inr(p.maturityValue)}</td>
-                    <td>${irrPill(irrCont)}</td>
-                  </tr>
-                  <tr class="${indWinner.type === 'paidup' ? 'tr-best' : ''}">
-                    <td><span class="scenario-name"><span class="sdot" style="background:#fbbf24"></span>Paid-up</span></td>
-                    <td>${inr(p.paidUpMaturity)}</td>
-                    <td>${irrPill(irrPu)}</td>
-                  </tr>
-                  <tr>
-                    <td><span class="scenario-name"><span class="sdot" style="background:#f87171"></span>Surrender Now</span></td>
-                    <td>${inr(p.surrenderValue)}</td>
-                    <td>${irrPill(irrSur)}</td>
-                  </tr>
-                  <tr class="${indWinner.type === 'mf' ? 'tr-best' : ''}">
-                    <td><span class="scenario-name"><span class="sdot" style="background:#4ade80"></span>Mutual Fund (MF)</span></td>
-                    <td>${inr(p.mfFinal)}</td>
-                    <td><span class="irr-pill pill-green">${pct(irrMf)}</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
-            <div style="display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
-              <div class="detail-grid" style="grid-template-columns:1fr 1fr; gap:8px;">
-                <div class="detail-item" style="padding:8px 10px;">
-                  <div class="di-label" style="font-size:9px;">Sum Assured</div>
-                  <div class="di-val" style="font-size:13px;">${inr(p.sa)}</div>
-                </div>
-                <div class="detail-item" style="padding:8px 10px;">
-                  <div class="di-label" style="font-size:9px;">Annual Premium</div>
-                  <div class="di-val" style="font-size:13px;">${inr(p.ap)}</div>
-                </div>
-                <div class="detail-item" style="padding:8px 10px;">
-                  <div class="di-label" style="font-size:9px;">Paid Till Date</div>
-                  <div class="di-val" style="font-size:13px;">${inr(p.tpp)}</div>
-                </div>
-                <div class="detail-item" style="padding:8px 10px;">
-                  <div class="di-label" style="font-size:9px;">Remaining Term</div>
-                  <div class="di-val" style="font-size:13px;">${p.yearsLeft} yrs</div>
-                </div>
-              </div>
-              
-              <div class="wg-bar ${indWealthGain >= 0 ? 'pos' : 'neg'}" style="margin-top:0; padding:10px 14px;">
-                <div>
-                  <div class="wg-label" style="font-size:11px;">Wealth Difference (MF vs Continue)</div>
-                  <div class="wg-sub" style="font-size:10px; margin-top:0;">at Year ${p.pt}</div>
-                </div>
-                <div class="wg-val ${indWealthGain >= 0 ? 'pos' : 'neg'}" style="font-size:18px;">${(indWealthGain >= 0 ? '+' : '') + inr(indWealthGain)}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  });
-  indBreakdownContainer.innerHTML = indHTML;
+  // The clone itself IS the results block (it's already display:block)
+  clone.scrollIntoView({behavior:'smooth',block:'start'});
 
-  buildChart(labels, cPolicy, cPaidUp, cMF);
-
-  const resultsEl = document.getElementById('results');
-  resultsEl.style.display = 'block';
-  resultsEl.scrollIntoView({behavior:'smooth',block:'start'});
-
-  setTimeout(saveToGoogleSheet, 500);
+  setTimeout(() => saveToGoogleSheet(id), 500);
+  }
 }
 
-function colorIrrCard(id, irr) {
-  const el = document.getElementById(id);
+
+function colorIrrCard(parent, id, irr) {
+  const el = parent.querySelector('#' + id);
+  if (!el) return;
   if (isNaN(irr)) { el.className = 'mc-val'; return; }
   el.className = 'mc-val ' + (irr >= 7 ? 'c-green' : irr >= 5 ? 'c-amber' : 'c-red');
 }
 
-function buildChart(labels, cPolicy, cPaidUp, cMF) {
-  if (chartInst) { chartInst.destroy(); chartInst = null; }
+function buildChart(canvasId, policyId, labels, cPolicy, cPaidUp, cMF) {
+  // Destroy previous chart for this policy if it exists
+  if (chartInsts[policyId]) { chartInsts[policyId].destroy(); }
 
-  const ctx = document.getElementById('growthChart').getContext('2d');
-  chartInst = new Chart(ctx, {
+  const canvasEl = document.getElementById(canvasId);
+  if (!canvasEl) { console.warn('Chart canvas not found:', canvasId); return; }
+  const ctx = canvasEl.getContext('2d');
+  chartInsts[policyId] = new Chart(ctx, {
     type: 'line',
     data: {
       labels,
       datasets: [
         {
-          label: 'Continue Policies',
+          label: 'Continue Policy',
           data: cPolicy,
           borderColor: '#60a5fa',
           backgroundColor: 'rgba(96,165,250,0.07)',
@@ -2306,7 +2173,7 @@ function buildChart(labels, cPolicy, cPaidUp, cMF) {
           tension: 0.3,
         },
         {
-          label: 'Paid-up Policies',
+          label: 'Paid-up Policy',
           data: cPaidUp,
           borderColor: '#fbbf24',
           backgroundColor: 'rgba(251,191,36,0.05)',
@@ -2389,13 +2256,14 @@ function resetAll() {
   document.getElementById('groupLeader').value = '';
 
   document.getElementById('results').style.display = 'none';
-  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  document.getElementById('results-container').innerHTML = '';
+  for(let k in chartInsts) { if(chartInsts[k]) chartInsts[k].destroy(); } chartInsts = {};
   
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function printReport() {
-  if (document.getElementById('results').style.display === 'none') {
+  if (document.getElementById('results-container').children.length === 0) {
     alert('Please analyze a policy first, then export.');
     return;
   }
@@ -2410,61 +2278,82 @@ function printReport() {
 
   // Mark all direct children of .app except #results as no-print
   Array.from(app.children).forEach(el => {
-    if (el.id !== 'results') {
+    if (el.id !== 'results-container') {
       el.classList.add('no-print');
       hideEls.push(el);
     }
   });
   header.classList.add('no-print');
 
-  window.print();
+  // Trigger chart layouts update for print size
+  for (let k in chartInsts) {
+    if (chartInsts[k]) {
+      chartInsts[k].resize();
+    }
+  }
 
-  // Restore after print
+  // Yield to browser layout engine so ResizeObserver/Chart.js redrawing can complete
   setTimeout(() => {
-    hideEls.forEach(el => el.classList.remove('no-print'));
-    header.classList.remove('no-print');
-    document.title = originalTitle;
-  }, 500);
+    window.print();
+
+    // Restore after print
+    setTimeout(() => {
+      hideEls.forEach(el => el.classList.remove('no-print'));
+      header.classList.remove('no-print');
+      document.title = originalTitle;
+      
+      // Restore chart sizes
+      for (let k in chartInsts) {
+        if (chartInsts[k]) {
+          chartInsts[k].resize();
+        }
+      }
+    }, 500);
+  }, 150);
 }
 
 // ── Google Sheet Auto-Save ──
 const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxR_YWt7vbldI57ZxqX3WrnvZrp0gTLWPa8Fqo-YmMjRvo760WT_gd62njXd3q9e7n0/exec';
 
-function saveToGoogleSheet() {
+function saveToGoogleSheet(id) {
   if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') return;
 
-  const gv = id => (document.getElementById(id)?.value || '').trim();
-  const gt = id => (document.getElementById(id)?.textContent || '').trim();
+  const clone = document.getElementById(`result-${id}`);
+  if (!clone) return;
+
+  const gv = elId => (document.getElementById(elId)?.value || '').trim();
+  // For result elements inside the clone, use querySelector
+  const ct = selector => (clone.querySelector(selector)?.textContent || '').trim();
 
   const params = new URLSearchParams({
     c1:  gv('clientName'),
-    c2:  gv('policyName'),
-    c3:  gv('policyNo'),
-    c4:  gv('policyCategory'),
-    c5:  gv('policySubtype'),
-    c6:  gv('sumAssured'),
-    c7:  gv('annualPremium'),
-    c8:  gv('policyTerm'),
-    c9:  gv('premiumTerm'),
-    c10: gv('startDate'),
-    c11: gv('maturityDate'),
-    c12: gv('premiumsPaid'),
-    c13: gv('totalPremiumPaid'),
-    c14: gt('td-cont-val'),
-    c15: gt('td-pu-val'),
-    c16: gt('td-sur-val'),
-    c17: gt('td-mf-val'),
-    c18: gt('td-cont-irr'),
-    c19: gt('td-sur-irr'),
+    c2:  gv(`policyName-${id}`),
+    c3:  gv(`policyNo-${id}`),
+    c4:  gv(`policyCategory-${id}`),
+    c5:  gv(`policySubtype-${id}`),
+    c6:  gv(`sumAssured-${id}`),
+    c7:  gv(`annualPremium-${id}`),
+    c8:  gv(`policyTerm-${id}`),
+    c9:  gv(`premiumTerm-${id}`),
+    c10: gv(`startDate-${id}`),
+    c11: gv(`maturityDate-${id}`),
+    c12: gv(`premiumsPaid-${id}`),
+    c13: gv(`totalPremiumPaid-${id}`),
+    c14: ct('#td-cont-val'),
+    c15: ct('#td-pu-val'),
+    c16: ct('#td-sur-val'),
+    c17: ct('#td-mf-val'),
+    c18: ct('#td-cont-irr'),
+    c19: ct('#td-sur-irr'),
     c20: gv('mfReturn'),
-    c21: gt('wg-val'),
-    c22: gt('rec-title')
+    c21: ct('#wg-val'),
+    c22: ct('#rec-title')
   });
 
-  // Simple image request — no CORS, works everywhere
   const img = new Image();
   img.src = GOOGLE_SHEET_URL + '?' + params.toString();
 }
+
 </script>
 </body>
 </html>
