@@ -374,10 +374,17 @@ select option{background:#fff;color:var(--text);}
   padding:3px 10px;border-radius:20px;
   border:1px solid;
 }
-.stag-gold{color:var(--gold);border-color:rgba(37,99,235,0.3);background:rgba(37,99,235,0.08);}
-.stag-red {color:var(--red);border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);}
-.stag-green{color:var(--green);border-color:rgba(74,222,128,0.4);background:rgba(74,222,128,0.08);}
-.stag-blue{color:var(--blue);border-color:rgba(96,165,250,0.4);background:rgba(96,165,250,0.08);}
+.stag-continue  { color: #3b82f6; border-color: rgba(96,165,250,0.4); background: rgba(96,165,250,0.08); }
+.stag-continue.winner { color: #fff; border-color: #3b82f6; background: #3b82f6; font-weight: 600; }
+
+.stag-paidup    { color: #d97706; border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.08); }
+.stag-paidup.winner { color: #fff; border-color: #d97706; background: #d97706; font-weight: 600; }
+
+.stag-surrender { color: #ef4444; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.08); }
+.stag-surrender.winner { color: #fff; border-color: #ef4444; background: #ef4444; font-weight: 600; }
+
+.stag-mf        { color: #16a34a; border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.08); }
+.stag-mf.winner { color: #fff; border-color: #16a34a; background: #16a34a; font-weight: 600; }
 
 /* ── METRIC CARDS ── */
 .metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
@@ -2027,10 +2034,10 @@ function analyze() {
     `${winner.name} gives the highest maturity value · ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)})`;
 
   const tags = [
-    {t: `Continue: ${inr(maturityValue)}`, c: winner.type === 'continue' ? 'stag-green' : 'stag-gold'},
-    {t: `Paid-up: ${inr(paidUpMaturity)}`, c: winner.type === 'paidup' ? 'stag-green' : 'stag-gold'},
-    {t: `Surrender: ${inr(surrenderValue)}`, c: winner.type === 'surrender' ? 'stag-green' : 'stag-gold'},
-    {t: `MF: ${inr(mfFinal)}`, c: winner.type === 'mf' ? 'stag-green' : 'stag-gold'},
+    {t: `Continue: ${inr(maturityValue)}`, c: 'stag-continue' + (winner.type === 'continue' ? ' winner' : '')},
+    {t: `Paid-up: ${inr(paidUpMaturity)}`, c: 'stag-paidup' + (winner.type === 'paidup' ? ' winner' : '')},
+    {t: `Surrender: ${inr(surrenderValue)}`, c: 'stag-surrender' + (winner.type === 'surrender' ? ' winner' : '')},
+    {t: `MF: ${inr(mfFinal)}`, c: 'stag-mf' + (winner.type === 'mf' ? ' winner' : '')},
   ];
   clone.querySelector('#score-tags').innerHTML = tags
     .map(t => `<span class="stag ${t.c}">${t.t}</span>`).join('');
