@@ -602,7 +602,7 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
   }
   tbody td {
     border-bottom: 1px solid #cbd5e1 !important;
-    color: #334155 !important;
+    color: #334155;
     padding: 10px 14px !important;
   }
   tbody td:not(:first-child) {
@@ -1830,12 +1830,15 @@ function analyze() {
     clone.style.display = 'block';
     clone.classList.add('fade-in');
     
-    // Update Chart canvas ID to be unique
-    const chartCanvas = clone.querySelector('#growthChart');
-    if (chartCanvas) chartCanvas.id = `growthChart-${id}`;
+    // Make all IDs inside the clone unique by appending -${id}
+    clone.querySelectorAll('[id]').forEach(el => {
+      el.id = `${el.id}-${id}`;
+    });
 
     // Append clone to container
     container.appendChild(clone);
+
+    const findEl = name => clone.querySelector(`#${name}-${id}`);
     
   const policyName = document.getElementById(`policyName-${id}`).value || `Policy #${id}`;
   const policyNo = document.getElementById(`policyNo-${id}`).value || '';
@@ -1992,15 +1995,15 @@ function analyze() {
   const clientPanVal = (document.getElementById('clientPan').value || '').trim();
   const groupLeaderVal = (document.getElementById('groupLeader').value || '').trim();
 
-  clone.querySelector('#r-client-name').textContent = clientNameVal;
-  clone.querySelector('#r-client-meta').innerHTML = `
+  findEl('r-client-name').textContent = clientNameVal;
+  findEl('r-client-meta').innerHTML = `
     ${clientPanVal ? `<div><strong>PAN No:</strong> ${clientPanVal}</div>` : ''}
     ${groupLeaderVal ? `<div><strong>Group Leader:</strong> ${groupLeaderVal}</div>` : ''}
   `;
 
-  clone.querySelector('#r-policy-name').textContent = policyName + (policyNo ? ` (${policyNo})` : '');
-  clone.querySelector('#r-policy-label').textContent = `Policy #${id} — Individual Review`;
-  clone.querySelector('#r-policy-badge').textContent = id;
+  findEl('r-policy-name').textContent = policyName + (policyNo ? ` (${policyNo})` : '');
+  findEl('r-policy-label').textContent = `Policy #${id} — Individual Review`;
+  findEl('r-policy-badge').textContent = id;
 
   const scenarios = [
     { name: 'Continue Policy',  value: maturityValue,  type: 'continue', emoji: '📜', color: '#3b82f6' },
@@ -2012,10 +2015,10 @@ function analyze() {
   const runnerUp = scenarios[1];
   const diff = winner.value - runnerUp.value;
 
-  const scoreArc = clone.querySelector('#score-arc');
+  const scoreArc = findEl('score-arc');
   scoreArc.style.strokeDashoffset = 0; 
   scoreArc.style.stroke = winner.color;
-  const scoreNumEl = clone.querySelector('#score-num');
+  const scoreNumEl = findEl('score-num');
   const scoreText = '₹' + (winner.value / 100000).toFixed(2);
   scoreNumEl.textContent = scoreText;
   scoreNumEl.style.color = winner.color;
@@ -2029,8 +2032,8 @@ function analyze() {
     scoreNumEl.style.fontSize = '24px';
   }
 
-  clone.querySelector('#score-verdict').textContent = winner.name;
-  clone.querySelector('#score-desc').textContent =
+  findEl('score-verdict').textContent = winner.name;
+  findEl('score-desc').textContent =
     `${winner.name} gives the highest maturity value · ${inr(diff)} more than ${runnerUp.name} (${inr(runnerUp.value)})`;
 
   const tags = [
@@ -2039,46 +2042,46 @@ function analyze() {
     {t: `Surrender: ${inr(surrenderValue)}`, c: 'stag-surrender' + (winner.type === 'surrender' ? ' winner' : '')},
     {t: `MF: ${inr(mfFinal)}`, c: 'stag-mf' + (winner.type === 'mf' ? ' winner' : '')},
   ];
-  clone.querySelector('#score-tags').innerHTML = tags
+  findEl('score-tags').innerHTML = tags
     .map(t => `<span class="stag ${t.c}">${t.t}</span>`).join('');
 
-  clone.querySelector('#mc-cont-irr').textContent = pct(continueIRR);
-  clone.querySelector('#mc-pu-irr').textContent   = pct(paidUpIRR);
-  clone.querySelector('#mc-sur-irr').textContent  = pct(surrenderIRR);
-  clone.querySelector('#mc-mf-ret').textContent   = pct(mfNetRate);
+  findEl('mc-cont-irr').textContent = pct(continueIRR);
+  findEl('mc-pu-irr').textContent   = pct(paidUpIRR);
+  findEl('mc-sur-irr').textContent  = pct(surrenderIRR);
+  findEl('mc-mf-ret').textContent   = pct(mfNetRate);
 
-  colorIrrCard(clone, 'mc-cont-irr', continueIRR);
-  colorIrrCard(clone, 'mc-pu-irr',   paidUpIRR);
-  colorIrrCard(clone, 'mc-sur-irr',  surrenderIRR);
+  colorIrrCard(clone, 'mc-cont-irr', continueIRR, id);
+  colorIrrCard(clone, 'mc-pu-irr',   paidUpIRR, id);
+  colorIrrCard(clone, 'mc-sur-irr',  surrenderIRR, id);
 
-  clone.querySelector('#td-cont-val').textContent  = inr(maturityValue);
-  clone.querySelector('#td-cont-irr').innerHTML    = irrPill(continueIRR);
+  findEl('td-cont-val').textContent  = inr(maturityValue);
+  findEl('td-cont-irr').innerHTML    = irrPill(continueIRR);
 
-  clone.querySelector('#td-pu-val').textContent    = inr(paidUpMaturity);
-  clone.querySelector('#td-pu-irr').innerHTML      = irrPill(paidUpIRR);
+  findEl('td-pu-val').textContent    = inr(paidUpMaturity);
+  findEl('td-pu-irr').innerHTML      = irrPill(paidUpIRR);
 
-  clone.querySelector('#td-sur-val').textContent   = inr(surrenderValue);
-  clone.querySelector('#td-sur-irr').innerHTML     = irrPill(surrenderIRR);
+  findEl('td-sur-val').textContent   = inr(surrenderValue);
+  findEl('td-sur-irr').innerHTML     = irrPill(surrenderIRR);
 
-  clone.querySelector('#td-mf-val').textContent    = inr(mfFinal);
-  clone.querySelector('#td-mf-irr').innerHTML      = `<span class="irr-pill pill-green">${pct(mfNetRate)}</span>`;
+  findEl('td-mf-val').textContent    = inr(mfFinal);
+  findEl('td-mf-irr').innerHTML      = `<span class="irr-pill pill-green">${pct(mfNetRate)}</span>`;
 
   const rows = ['tr-continue','tr-paidup','tr-surrender','tr-mf'];
   const vals  = [maturityValue, paidUpMaturity, surrenderValue, mfFinal];
   const maxVal = Math.max(...vals);
   rows.forEach((rid,i) => {
-    const el = clone.querySelector(`#${rid}`);
+    const el = findEl(rid);
     if (el) el.className = vals[i] === maxVal ? 'tr-best' : '';
   });
 
-  const wgBar = clone.querySelector('#wg-bar');
+  const wgBar = findEl('wg-bar');
   wgBar.className = 'wg-bar ' + (wealthGain >= 0 ? 'pos' : 'neg');
-  clone.querySelector('#wg-val').className = 'wg-val ' + (wealthGain >= 0 ? 'pos' : 'neg');
-  clone.querySelector('#wg-val').textContent = (wealthGain >= 0 ? '+' : '') + inr(wealthGain);
-  clone.querySelector('#wg-label').textContent = wealthGain >= 0
+  findEl('wg-val').className = 'wg-val ' + (wealthGain >= 0 ? 'pos' : 'neg');
+  findEl('wg-val').textContent = (wealthGain >= 0 ? '+' : '') + inr(wealthGain);
+  findEl('wg-label').textContent = wealthGain >= 0
     ? 'MF generates more wealth than continuing policy'
     : 'Policy generates more wealth than MF in this case';
-  clone.querySelector('#wg-sub').textContent =
+  findEl('wg-sub').textContent =
     `${inr(mfFinal)} (MF) vs ${inr(maturityValue)} (Policy) at term of ${maxYearsLeft} years`;
 
   let recType, recEmoji, recTitleText, recBodyText, actionSteps;
@@ -2115,17 +2118,17 @@ function analyze() {
     ];
   }
 
-  const recBox = clone.querySelector('#rec-box');
+  const recBox = findEl('rec-box');
   recBox.className = 'rec-box ' + recType;
-  clone.querySelector('#rec-emoji').textContent = recEmoji;
-  clone.querySelector('#rec-title').className = 'rec-title ' + recType;
-  clone.querySelector('#rec-title').textContent = recTitleText;
-  clone.querySelector('#rec-body').textContent = recBodyText;
-  clone.querySelector('#action-steps').innerHTML = actionSteps
+  findEl('rec-emoji').textContent = recEmoji;
+  findEl('rec-title').className = 'rec-title ' + recType;
+  findEl('rec-title').textContent = recTitleText;
+  findEl('rec-body').textContent = recBodyText;
+  findEl('action-steps').innerHTML = actionSteps
     .map(s => `<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);">${s}</div>`)
     .join('');
 
-  clone.querySelector('#detail-grid').innerHTML = [
+  findEl('detail-grid').innerHTML = [
     {l:'Maturity Value',     v: inr(maturityValue)},
     {l:'Paid-up SA',         v: inr(paidUpSA)},
     {l:'Surrender Value',    v: inr(surrenderValue)},
@@ -2141,13 +2144,13 @@ function analyze() {
   `).join('');
 
   const pctDone = Math.min(100, Math.round((paid / pt) * 100));
-  clone.querySelector('#bel-fill').style.width = pctDone + '%';
-  clone.querySelector('#bel-marker').style.left = pctDone + '%';
-  clone.querySelector('#bel-year').textContent = `Yr ${paid}`;
-  clone.querySelector('#bel-mid').textContent  = `Yr ${Math.round(pt / 2)}`;
+  findEl('bel-fill').style.width = pctDone + '%';
+  findEl('bel-marker').style.left = pctDone + '%';
+  findEl('bel-year').textContent = `Yr ${paid}`;
+  findEl('bel-mid').textContent  = `Yr ${Math.round(pt / 2)}`;
 
   if (isUlip) {
-    clone.querySelector('#ulip-charges-card').style.display = '';
+    findEl('ulip-charges-card').style.display = '';
     const pacPct       = +document.getElementById(`u_pac-${id}`).value              || 0;
     const fmcPct       = +document.getElementById(`u_fmc-${id}`).value              || 0;
     const mortalityPct = +document.getElementById(`u_mortality-${id}`).value        || 0;
@@ -2155,9 +2158,9 @@ function analyze() {
 
     const drag = mortalityPct + fmcPct + adminPct + pacPct * 0.1;
     
-    clone.querySelector('#ulip-total-drag').textContent = pct(drag, 2);
-    clone.querySelector('#ulip-net-ret-text').textContent = pct(mfNetRate - drag);
-    clone.querySelector('#ulip-gross-ret').textContent = pct(mfReturn);
+    findEl('ulip-total-drag').textContent = pct(drag, 2);
+    findEl('ulip-net-ret-text').textContent = pct(mfNetRate - drag);
+    findEl('ulip-gross-ret').textContent = pct(mfReturn);
 
     const charges = [
       {name:'Premium Allocation', val: pacPct},
@@ -2173,9 +2176,9 @@ function analyze() {
         <span class="charge-pct">${pct(c.val)}</span>
       </div>
     `).join('');
-    clone.querySelector('#charge-bars').innerHTML = chargesHTML;
+    findEl('charge-bars').innerHTML = chargesHTML;
   } else {
-    clone.querySelector('#ulip-charges-card').style.display = 'none';
+    findEl('ulip-charges-card').style.display = 'none';
   }
 
   buildChart(`growthChart-${id}`, id, labels, cPolicy, cPaidUp, cMF);
@@ -2264,8 +2267,8 @@ function analyze() {
 }
 
 
-function colorIrrCard(parent, id, irr) {
-  const el = parent.querySelector('#' + id);
+function colorIrrCard(parent, id, irr, policyId) {
+  const el = parent.querySelector('#' + id + '-' + policyId);
   if (!el) return;
   if (isNaN(irr)) { el.className = 'mc-val'; return; }
   el.className = 'mc-val ' + (irr >= 7 ? 'c-green' : irr >= 5 ? 'c-amber' : 'c-red');
@@ -2443,7 +2446,7 @@ function saveToGoogleSheet(id) {
   if (!clone) return;
 
   const gv = elId => (document.getElementById(elId)?.value || '').trim();
-  // For result elements inside the clone, use querySelector
+  // For result elements inside the clone, use querySelector with unique IDs
   const ct = selector => (clone.querySelector(selector)?.textContent || '').trim();
 
   const params = new URLSearchParams({
@@ -2460,15 +2463,15 @@ function saveToGoogleSheet(id) {
     c11: gv(`maturityDate-${id}`),
     c12: gv(`premiumsPaid-${id}`),
     c13: gv(`totalPremiumPaid-${id}`),
-    c14: ct('#td-cont-val'),
-    c15: ct('#td-pu-val'),
-    c16: ct('#td-sur-val'),
-    c17: ct('#td-mf-val'),
-    c18: ct('#td-cont-irr'),
-    c19: ct('#td-sur-irr'),
+    c14: ct('#td-cont-val-' + id),
+    c15: ct('#td-pu-val-' + id),
+    c16: ct('#td-sur-val-' + id),
+    c17: ct('#td-mf-val-' + id),
+    c18: ct('#td-cont-irr-' + id),
+    c19: ct('#td-sur-irr-' + id),
     c20: gv('mfReturn'),
-    c21: ct('#wg-val'),
-    c22: ct('#rec-title')
+    c21: ct('#wg-val-' + id),
+    c22: ct('#rec-title-' + id)
   });
 
   const img = new Image();
