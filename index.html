@@ -572,7 +572,7 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
   body::before{display:none!important;}
   header, .no-print{display:none!important;}
   #results{display:none!important;} /* Keep template hidden */
-  #results-container > div{display:block!important;margin-top:0!important;}
+  #results-container > div{display:block!important;margin-top:20px!important;}
   #results-container > div:not(:first-child){break-before:page!important;}
   
   /* Force page break inside a single policy's results after the Chart & Table Grid-2 */
@@ -719,6 +719,11 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 .policy-tab:hover:not(.active) {
   background: rgba(255,255,255,0.9);
 }
+.text-left {
+  text-align: left !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+}
 </style>
 </head>
 <body>
@@ -791,9 +796,6 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
 
   <!-- POLICIES CONTAINER -->
   <div id="policies-container"></div>
-  <div style="display:flex; justify-content:center; margin-bottom: 30px;" class="no-print">
-    <button class="btn btn-outline" onclick="addNewPolicy()" style="font-weight:700; font-size:14px; padding:10px 24px;">➕ Add Another Policy</button>
-  </div>
 
   <!-- ══ ROW 2: MF ASSUMPTIONS ══ -->
   <div class="card" style="margin-bottom:20px;">
@@ -824,6 +826,10 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
     </div>
   </div>
 
+  <div style="display:flex; justify-content:center; margin-bottom: 30px;" class="no-print">
+    <button class="btn btn-outline" onclick="addNewPolicy()" style="font-weight:700; font-size:14px; padding:10px 24px;">➕ Add Another Policy</button>
+  </div>
+
   <!-- ANALYZE BUTTON -->
   <div class="action-row" style="margin-bottom:28px;">
     <button class="btn btn-analyze" onclick="analyze()">⚡ Analyze Policy Now</button>
@@ -838,7 +844,8 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
   <div id="results" class="fade-in">
 
     <!-- CLIENT & POLICY HEADER -->
-    <div class="card" style="margin-bottom:18px;">
+    <div class="card" style="margin-bottom:18px; position:relative; overflow:visible;">
+      <div class="policy-badge" id="r-policy-badge">—</div>
       <div class="score-section" style="padding:20px 24px;">
         <div class="score-ring-wrap" style="width:80px;height:80px;">
           <svg viewBox="0 0 80 80">
@@ -1083,13 +1090,7 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
     <!-- INDIVIDUAL POLICY BREAKDOWN -->
     <div id="individual-breakdown-container" style="margin-bottom:18px;"></div>
 
-    <!-- DISCLAIMER -->
-    <div style="font-size:11px;color:var(--text3);text-align:center;line-height:1.7;padding:0 40px;">
-      ⚠️ This tool is for advisor use only. All projections are illustrative and based on inputs provided. 
-      IRR calculations use Newton-Raphson XIRR method. Actual policy benefits may vary. 
-      Consult the policy document and insurer for exact surrender values. 
-      Mutual fund returns are not guaranteed.
-    </div>
+
 
   </div><!-- /results-template -->
   <div id="results-container"></div>
@@ -1818,6 +1819,7 @@ function analyze() {
   const mfNetRate = mfReturn;
 
   let hasErrors = false;
+  const summaryData = [];
 
   for (const id of activePolicies) {
     const isUlip = document.getElementById(`policyCategory-${id}`).value === 'ulip';
@@ -1998,6 +2000,7 @@ function analyze() {
 
   clone.querySelector('#r-policy-name').textContent = policyName + (policyNo ? ` (${policyNo})` : '');
   clone.querySelector('#r-policy-label').textContent = `Policy #${id} — Individual Review`;
+  clone.querySelector('#r-policy-badge').textContent = id;
 
   const scenarios = [
     { name: 'Continue Policy',  value: maturityValue,  type: 'continue', emoji: '📜', color: '#3b82f6' },
@@ -2033,6 +2036,7 @@ function analyze() {
   const tags = [
     {t: `Continue: ${inr(maturityValue)}`, c: winner.type === 'continue' ? 'stag-green' : 'stag-gold'},
     {t: `Paid-up: ${inr(paidUpMaturity)}`, c: winner.type === 'paidup' ? 'stag-green' : 'stag-gold'},
+    {t: `Surrender: ${inr(surrenderValue)}`, c: winner.type === 'surrender' ? 'stag-green' : 'stag-gold'},
     {t: `MF: ${inr(mfFinal)}`, c: winner.type === 'mf' ? 'stag-green' : 'stag-gold'},
   ];
   clone.querySelector('#score-tags').innerHTML = tags
@@ -2176,10 +2180,86 @@ function analyze() {
 
   buildChart(`growthChart-${id}`, id, labels, cPolicy, cPaidUp, cMF);
 
+  summaryData.push({
+    clientName: clientNameVal,
+    policyRef: policyName + (policyNo ? ` (${policyNo})` : ''),
+    continueVal: maturityValue,
+    paidUpVal: paidUpMaturity,
+    surrenderVal: surrenderValue,
+    mfVal: mfFinal,
+    verdict: winner.type === 'mf' ? 'Mutual is best' : (winner.type === 'paidup' ? 'Go Paid-up' : 'Continue Policy')
+  });
+
   // The clone itself IS the results block (it's already display:block)
   clone.scrollIntoView({behavior:'smooth',block:'start'});
 
   setTimeout(() => saveToGoogleSheet(id), 500);
+  }
+
+  if (summaryData.length > 0 && !hasErrors) {
+    const summaryCard = document.createElement('div');
+    summaryCard.className = 'card';
+    summaryCard.style.marginTop = '24px';
+    summaryCard.style.marginBottom = '24px';
+    summaryCard.style.overflow = 'visible';
+    summaryCard.style.breakInside = 'avoid';
+    
+    let tableRows = '';
+    for (const row of summaryData) {
+      tableRows += `
+        <tr>
+          <td style="font-weight: 600;">${row.clientName}</td>
+          <td class="text-left">${row.policyRef}</td>
+          <td style="text-align: right; font-family: 'IBM Plex Mono', monospace;">${inr(row.continueVal)}</td>
+          <td style="text-align: right; font-family: 'IBM Plex Mono', monospace;">${inr(row.paidUpVal)}</td>
+          <td style="text-align: right; font-family: 'IBM Plex Mono', monospace;">${inr(row.surrenderVal)}</td>
+          <td style="text-align: right; font-family: 'IBM Plex Mono', monospace;">${inr(row.mfVal)}</td>
+          <td class="text-left" style="font-weight: 600; color: ${row.verdict === 'Mutual is best' ? 'var(--green)' : row.verdict === 'Go Paid-up' ? 'var(--amber)' : 'var(--blue)'};">${row.verdict}</td>
+        </tr>
+      `;
+    }
+
+    summaryCard.innerHTML = `
+      <div class="card-head" style="background: rgba(37, 99, 235, 0.03); border-bottom: 1px solid var(--border);">
+        <div class="cicon ci-purple">📋</div>
+        <div>
+          <div class="ctitle" style="font-family:'Playfair Display',serif; font-size:18px;">Executive Summary Table</div>
+          <div class="csub">Comparison overview of all analysed policies</div>
+        </div>
+      </div>
+      <div class="ctable-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Client Name</th>
+              <th style="text-align: left;">Policy Name & No.</th>
+              <th style="text-align: right;">Continue Policy</th>
+              <th style="text-align: right;">Paid-up</th>
+              <th style="text-align: right;">Surrender Value</th>
+              <th style="text-align: right;">Mutual Fund</th>
+              <th style="text-align: left;">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </div>
+    `;
+    container.appendChild(summaryCard);
+
+    const summaryDisclaimer = document.createElement('div');
+    summaryDisclaimer.style.fontSize = '11px';
+    summaryDisclaimer.style.color = 'var(--text3)';
+    summaryDisclaimer.style.textAlign = 'center';
+    summaryDisclaimer.style.lineHeight = '1.7';
+    summaryDisclaimer.style.padding = '0 40px';
+    summaryDisclaimer.style.marginTop = '12px';
+    summaryDisclaimer.innerHTML = `⚠️ This tool is for advisor use only. All projections are illustrative and based on inputs provided. 
+      IRR calculations use Newton-Raphson XIRR method. Actual policy benefits may vary. 
+      Consult the policy document and insurer for exact surrender values. 
+      Mutual fund returns are not guaranteed.`;
+    container.appendChild(summaryDisclaimer);
   }
 }
 
