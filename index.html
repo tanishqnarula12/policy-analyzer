@@ -573,13 +573,6 @@ tbody tr:hover{background:rgba(37,99,235,0.03);}
   header, .no-print{display:none!important;}
   #results{display:none!important;} /* Keep template hidden */
   #results-container > div{display:block!important;margin-top:20px!important;}
-  #results-container > div:not(:first-child){break-before:page!important;}
-  
-  /* Force page break inside a single policy's results after the Chart & Table Grid-2 */
-  #results-container > div > .grid-2:first-of-type {
-    page-break-after: always !important;
-    break-after: page !important;
-  }
   
   .card{
     break-inside:avoid;
