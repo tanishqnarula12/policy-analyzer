@@ -1676,10 +1676,18 @@ function irrPill(v) {
   return             `<span class="irr-pill pill-red">${pct(v)}</span>`;
 }
 
-// ─── XIRR (Newton-Raphson) ────────────────────
+// ─── XIRR (Newton-Raphson + bisection fallback) ────────────────────
 function xirr(cfs, times) {
+  function npvAt(r) {
+    let v = 0;
+    for (let i = 0; i < cfs.length; i++) v += cfs[i] / Math.pow(1 + r, times[i]);
+    return v;
+  }
+  const scale = cfs.reduce(function(s, c) { return s + Math.abs(c); }, 0) || 1;
+
+  // Newton-Raphson first (fast when it converges)
   let r = 0.1;
-  for (let iter = 0; iter < 2000; iter++) {
+  for (let iter = 0; iter < 100; iter++) {
     let npv = 0, dnpv = 0;
     for (let i = 0; i < cfs.length; i++) {
       const t = times[i];
@@ -1689,10 +1697,26 @@ function xirr(cfs, times) {
     }
     if (Math.abs(dnpv) < 1e-14) break;
     const nr = r - npv / dnpv;
-    if (Math.abs(nr - r) < 1e-9) return nr;
-    r = Math.max(-0.99, Math.min(nr, 20));
+    if (!isFinite(nr) || nr <= -1 || nr > 20) break; // diverging — use bisection
+    if (Math.abs(nr - r) < 1e-9) {
+      if (Math.abs(npvAt(nr)) < 1e-6 * scale) return nr; // verified true root
+      break;
+    }
+    r = nr;
   }
-  return r;
+
+  // Bisection: for normal cash flows (outflows then inflow) NPV has a
+  // unique root in (-1, ∞), so this always finds the correct IRR
+  let lo = -0.999999, hi = 20;
+  let fLo = npvAt(lo), fHi = npvAt(hi);
+  if (!isFinite(fLo) || !isFinite(fHi) || fLo * fHi > 0) return NaN;
+  for (let iter = 0; iter < 200; iter++) {
+    const mid = (lo + hi) / 2;
+    const fMid = npvAt(mid);
+    if (Math.abs(fMid) < 1e-6 * scale || (hi - lo) < 1e-9) return mid;
+    if (fLo * fMid < 0) { hi = mid; fHi = fMid; } else { lo = mid; fLo = fMid; }
+  }
+  return (lo + hi) / 2;
 }
 
 // ─── SIP FUTURE VALUE ─────────────────────────
